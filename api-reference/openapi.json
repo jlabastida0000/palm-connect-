@@ -19,7 +19,7 @@
     }
   ],
   "paths": {
-    "/tranasctions": {
+    "/transactions": {
       "get": {
         "description": "Returns all transactions from the system that the user has access to",
         "parameters": [
@@ -41,7 +41,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/transactions"
+                    "$ref": "#/components/schemas/Transaction"
                   }
                 }
               }
@@ -60,13 +60,13 @@
         }
       },
       "post": {
-        "description": "Creates a new transactions in the store",
+        "description": "Creates a new transaction in the store",
         "requestBody": {
-          "description": "transactions to add to the store",
+          "description": "Transaction to add to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Newtransactions"
+                "$ref": "#/components/schemas/NewTransaction"
               }
             }
           },
@@ -74,17 +74,17 @@
         },
         "responses": {
           "200": {
-            "description": "transactions response",
+            "description": "Transaction response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/transactions"
+                  "$ref": "#/components/schemas/Transaction"
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Unexpected error",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,14 +96,14 @@
         }
       }
     },
-    "/transactionss/{id}": {
+    "/transactions/{id}": {
       "delete": {
-        "description": "Deletes a single transactions based on the ID supplied",
+        "description": "Deletes a single transaction based on the ID supplied",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of transactions to delete",
+            "description": "ID of transaction to delete",
             "required": true,
             "schema": {
               "type": "integer",
@@ -113,11 +113,11 @@
         ],
         "responses": {
           "204": {
-            "description": "transactions deleted",
+            "description": "Transaction deleted",
             "content": {}
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Unexpected error",
             "content": {
               "application/json": {
                 "schema": {
@@ -132,14 +132,11 @@
   },
   "components": {
     "schemas": {
-      "transactions": {
-        "required": [
-          "name"
-        ],
+      "Transaction": {
         "type": "object",
         "properties": {
           "name": {
-            "description": "The name of the transactions",
+            "description": "The name of the transaction",
             "type": "string"
           },
           "tag": {
@@ -148,10 +145,10 @@
           }
         }
       },
-      "Newtransactions": {
+      "NewTransaction": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/transactions"
+            "$ref": "#/components/schemas/Transaction"
           },
           {
             "required": [
@@ -160,7 +157,7 @@
             "type": "object",
             "properties": {
               "id": {
-                "description": "Identification number of the transactions",
+                "description": "Identification number of the transaction",
                 "type": "integer",
                 "format": "int64"
               }
@@ -169,10 +166,6 @@
         ]
       },
       "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
         "type": "object",
         "properties": {
           "error": {
