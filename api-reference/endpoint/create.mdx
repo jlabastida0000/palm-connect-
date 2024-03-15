@@ -1,4 +1,41 @@
 ---
-title: 'Create Transactions'
+title: 'Create Transaction'
 openapi: 'POST /transactions'
 ---
+
+## Create Transaction
+
+`POST /transactions`
+
+Creates a new transaction in the store.
+
+### Request Body
+
+The request body should contain a JSON object representing the transaction to be created.
+
+#### Transaction Properties
+
+- `name` (required): The name of the transaction.
+- `tag` (optional): Tag to specify the type of transaction.
+
+### Example Request
+
+```plaintext
+POST https://api.palmconnect.dev/api/accounting/v1/transactions
+Content-Type: application/json
+
+{
+  "name": "New Transaction",
+  "tag": "expense"
+}
+```
+### Example Response
+- `200` (OK): Transaction created successfully.
+- `400` (Bad) Request: Unexpected error.
+
+```json
+{
+  "error": 400,
+  "message": "Unexpected error occurred while creating the transaction."
+}
+
