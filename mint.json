@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Palm Connect Starter Kit",
+  "name": "Getting Started with Palm Connect",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
@@ -75,7 +75,7 @@
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Palm Connect API's",
       "pages": [
         "api-reference/endpoint/get",
         "api-reference/endpoint/create",
