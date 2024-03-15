@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.palmconnect.com"
+      "url": "https://getpalm.com/"
     }
   ],
   "security": [
