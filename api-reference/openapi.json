@@ -146,24 +146,23 @@
         }
       },
       "NewTransaction": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Transaction"
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the transaction",
+            "type": "string"
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the transaction",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+          "tag": {
+            "description": "Tag to specify the type",
+            "type": "string"
+          },
+          "id": {
+            "description": "Identification number of the transaction",
+            "type": "integer",
+            "format": "int64"
           }
-        ]
+        },
+        "required": ["name"]
       },
       "Error": {
         "type": "object",
