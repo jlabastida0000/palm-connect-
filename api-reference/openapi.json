@@ -35,7 +35,7 @@
         ],
         "responses": {
           "200": {
-            "description": "transactions response",
+            "description": "Transactions response",
             "content": {
               "application/json": {
                 "schema": {
