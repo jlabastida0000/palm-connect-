@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "OpenAPI Palm Connect",
+    "description": "An API that transforms your transaction data into meaningful insights",
     "license": {
       "name": "MIT"
     },
@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "http://sandbox.palmconnect.com"
     }
   ],
   "security": [
@@ -19,9 +19,9 @@
     }
   ],
   "paths": {
-    "/plants": {
+    "/tranasctions": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "description": "Returns all transactions from the system that the user has access to",
         "parameters": [
           {
             "name": "limit",
@@ -35,13 +35,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "transactions response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "$ref": "#/components/schemas/transactions"
                   }
                 }
               }
@@ -60,13 +60,13 @@
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "description": "Creates a new transactions in the store",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "description": "transactions to add to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/Newtransactions"
               }
             }
           },
@@ -74,11 +74,11 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "transactions response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/transactions"
                 }
               }
             }
@@ -96,14 +96,14 @@
         }
       }
     },
-    "/plants/{id}": {
+    "/transactionss/{id}": {
       "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+        "description": "Deletes a single transactions based on the ID supplied",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of plant to delete",
+            "description": "ID of transactions to delete",
             "required": true,
             "schema": {
               "type": "integer",
@@ -113,7 +113,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Plant deleted",
+            "description": "transactions deleted",
             "content": {}
           },
           "400": {
@@ -132,14 +132,14 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
+      "transactions": {
         "required": [
           "name"
         ],
         "type": "object",
         "properties": {
           "name": {
-            "description": "The name of the plant",
+            "description": "The name of the transactions",
             "type": "string"
           },
           "tag": {
@@ -148,10 +148,10 @@
           }
         }
       },
-      "NewPlant": {
+      "Newtransactions": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/Plant"
+            "$ref": "#/components/schemas/transactions"
           },
           {
             "required": [
@@ -160,7 +160,7 @@
             "type": "object",
             "properties": {
               "id": {
-                "description": "Identification number of the plant",
+                "description": "Identification number of the transactions",
                 "type": "integer",
                 "format": "int64"
               }
