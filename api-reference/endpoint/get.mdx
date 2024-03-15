@@ -1,50 +1,31 @@
 ---
-title: 'Create Transactions'
-openapi: 'POST /transactions'
+title: 'Get Transactions'
+openapi: 'GET /transactions'
 ---
 
-## Create Transactions
+## Get Transactions
 
-`POST /transactions`
+`GET /transactions`
 
-Creates a new transaction(s) for your merchant.
-
-### Request Body
-
-The request body should contain a JSON object representing the transaction to be created.
-
-#### Transaction Properties
-
-- `name` (required): The name of the transaction.
-- `tag` (optional): Tag to specify the type of transaction.
+Returns a list of Transaction objects.
 
 ### Example Request
 
 ```plaintext
-POST https://getpalm.com/transactions
-Content-Type: application/json
+GET https://getpalm.com/transactions?limit=5
 
-{
-  "name": "New Transaction",
-  "tag": "expense"
-}
 ```
 ### Example Response
 
+Responses
+- `200` (OK): Transactions response.
+- `400` (Bad Request): Unexpected error.
+
 ```json
-[
-    {
-        "id": "11",
-        "amount": 200.75,
-        "date": "2024-03-12T14:15:00Z",
-        "description": "Expense reimbursement"
-    },
-    {
-        "id": "12",
-        "amount": 75.00,
-        "date": "2024-03-11T11:45:00Z",
-        "description": "Gasoline purchase"
-    },
-    ...
-]
+
+{
+  "error": 400,
+  "message": "Unexpected error occurred while retrieving transactions."
+}
+
 
