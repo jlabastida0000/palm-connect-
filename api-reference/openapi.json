@@ -60,9 +60,9 @@
         }
       },
       "post": {
-        "description": "Creates a new transaction in the store",
+        "description": "Creates a new transaction(s) for your merchant",
         "requestBody": {
-          "description": "Transaction to add to the store",
+          "description": "Transaction(s) to add to the merchant's account",
           "content": {
             "application/json": {
               "schema": {
