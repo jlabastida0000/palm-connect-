@@ -1,21 +1,33 @@
 ---
-title: 'Get Transactions'
-openapi: 'Get /transactions/{id}'
-
+title: 'Create Transactions'
+openapi: 'POST /transactions'
 ---
-`GET /transactions`
 
-    Returns a list of Transaction objects.
+## Create Transactions
 
-### Query Parameters
+`POST /transactions`
 
-- `limit` (optional): The maximum number of transactions to return (default: 10)
-- `offset` (optional): The offset for pagination (default: 0)
+Creates a new transaction(s) for your merchant.
+
+### Request Body
+
+The request body should contain a JSON object representing the transaction to be created.
+
+#### Transaction Properties
+
+- `name` (required): The name of the transaction.
+- `tag` (optional): Tag to specify the type of transaction.
 
 ### Example Request
 
 ```plaintext
-GET https://api.palmconnect.dev/api/accounting/v1/transactions?limit=5&offset=10
+POST https://getpalm.com/transactions
+Content-Type: application/json
+
+{
+  "name": "New Transaction",
+  "tag": "expense"
+}
 ```
 ### Example Response
 
