@@ -1,4 +1,39 @@
 ---
 title: 'Get Transactions'
-openapi: 'GET /transactions'
 ---
+
+## Get Transactions
+
+`GET /transactions`
+
+Returns a list of Transaction objects.
+
+### Query Parameters
+
+- `limit` (optional): The maximum number of transactions to return (default: 10)
+- `offset` (optional): The offset for pagination (default: 0)
+
+### Example Request
+
+```plaintext
+GET https://api.palmconnect.dev/api/accounting/v1/transactions?limit=5&offset=10
+```
+### Example Response
+
+```json
+[
+    {
+        "id": "11",
+        "amount": 200.75,
+        "date": "2024-03-12T14:15:00Z",
+        "description": "Expense reimbursement"
+    },
+    {
+        "id": "12",
+        "amount": 75.00,
+        "date": "2024-03-11T11:45:00Z",
+        "description": "Gasoline purchase"
+    },
+    ...
+]
+
