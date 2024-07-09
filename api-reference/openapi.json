@@ -1,187 +1,268 @@
-{
-  "openapi": "3.0.1",
-  "info": {
-    "title": "OpenAPI Palm Connect",
-    "description": "An API that transforms your transaction data into meaningful insights",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://getpalm.com/"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
-  "paths": {
-    "/transactions": {
-      "get": {
-        "description": "Returns all transactions from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Transactions response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Transaction"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new transaction(s) for your merchant",
-        "requestBody": {
-          "description": "Transaction(s) to add to the merchant's account",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewTransaction"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Transaction response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Transaction"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/transactions/{id}": {
-      "delete": {
-        "description": "Deletes a single transaction based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of transaction to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Transaction deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Transaction": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the transaction",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewTransaction": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the transaction",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          },
-          "id": {
-            "description": "Identification number of the transaction",
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "required": ["name"]
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
-    }
-  }
-}
+openapi: 3.0.0
+info:
+  title: Transactions API
+  version: 1.0.0
+paths:
+  /v1/transactions/sync:
+    post:
+      summary: Sync Transactions
+      operationId: TransactionsSync
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionsSyncRequest'
+      responses:
+        '200':
+          description: A list of transactions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionsSyncResponse'
+  /v1/transactions:
+    post:
+      summary: Create a Transaction
+      operationId: CreateTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '200':
+          description: The created transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransactionResponse'
+  /v1/transactions/{transaction_id}:
+    put:
+      summary: Update a Transaction
+      operationId: UpdateTransaction
+      parameters:
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransactionRequest'
+      responses:
+        '200':
+          description: The updated transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTransactionResponse'
+    delete:
+      summary: Delete a Transaction
+      operationId: DeleteTransaction
+      parameters:
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        account_id:
+          type: string
+        account_owner:
+          type: string
+        amount:
+          type: number
+          format: double
+        authorized_date:
+          type: string
+        authorized_datetime:
+          type: string
+          format: date-time
+        category:
+          type: string
+        category_id:
+          type: string
+        check_number:
+          type: string
+        counterparties:
+          type: string
+        date:
+          type: string
+        datetime:
+          type: string
+          format: date-time
+        iso_currency_code:
+          type: string
+        logo_url:
+          type: string
+        merchant_entity_id:
+          type: string
+        merchant_name:
+          type: string
+        name:
+          type: string
+        payment_channel:
+          type: string
+        pending:
+          type: boolean
+        pending_transaction_id:
+          type: string
+        personal_finance_category_icon_url:
+          type: string
+        transaction_code:
+          type: string
+        transaction_id:
+          type: string
+        transaction_type:
+          type: string
+        unofficial_currency_code:
+          type: string
+        website:
+          type: string
+        status:
+          type: string
+        institution_connection_uuid:
+          type: string
+        datetime_bigquery_added:
+          type: string
+          format: date-time
+        location_address:
+          type: string
+        location_city:
+          type: string
+        location_region:
+          type: string
+        location_postal_code:
+          type: string
+        location_country:
+          type: string
+        location_lat:
+          type: string
+        location_lon:
+          type: string
+        location_store_number:
+          type: string
+        payment_meta_reference_number:
+          type: string
+        payment_meta_ppd_id:
+          type: string
+        payment_meta_payee:
+          type: string
+        payment_meta_by_order_of:
+          type: string
+        payment_meta_payer:
+          type: string
+        payment_meta_payment_method:
+          type: string
+        payment_meta_payment_processor:
+          type: string
+        payment_meta_reason:
+          type: string
+        personal_finance_category_confidence_level:
+          type: string
+        personal_finance_category_detailed:
+          type: string
+        personal_finance_category_primary:
+          type: string
+        row_num:
+          type: integer
+          format: int64
+        pf_authorized_date:
+          type: string
+          format: date-time
+        pf_authorized_datetime:
+          type: string
+          format: date-time
+        pf_date:
+          type: string
+          format: date-time
+        pf_datetime:
+          type: string
+          format: date-time
+        transaction_date:
+          type: string
+          format: date-time
+        business_uuid:
+          type: string
+        business_name:
+          type: string
+        user_uuid:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        phone_number:
+          type: string
+    TransactionsSyncRequest:
+      type: object
+      properties:
+        keyword:
+          type: string
+        start_datetime:
+          type: string
+          format: date-time
+        end_datetime:
+          type: string
+          format: date-time
+        category:
+          type: array
+          items:
+            type: string
+        account:
+          type: array
+          items:
+            type: string
+        transaction_id:
+          type: string
+        limit:
+          type: integer
+    TransactionsSyncResponse:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        has_more:
+          type: boolean
+        next_cursor:
+          type: string
+    CreateTransactionRequest:
+      type: object
+      properties:
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+    CreateTransactionResponse:
+      type: object
+      properties:
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+    UpdateTransactionResponse:
+      type: object
+      properties:
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+    DeleteTransactionRequest:
+      type: object
+      properties:
+        transaction_id:
+          type: string
