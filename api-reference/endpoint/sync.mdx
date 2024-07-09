@@ -1,0 +1,107 @@
+---
+title: 'Sync Transactions'
+openapi: 'POST /v1/transactions/sync'
+---
+
+## Sync Transactions
+
+`POST /v1/transactions/sync`
+
+Sync transactions based on various filters.
+
+### Request Body
+
+The request body should contain a JSON object representing the filters for transactions sync.
+
+#### TransactionsSyncRequest Properties
+
+- `keyword` (optional): Keyword to filter transactions.
+- `start_datetime` (optional): Start datetime for filtering transactions.
+- `end_datetime` (optional): End datetime for filtering transactions.
+- `category` (optional): Categories to filter transactions.
+- `account` (optional): Accounts to filter transactions.
+- `transaction_id` (optional): Specific transaction ID to filter.
+- `limit` (optional): Limit the number of transactions returned.
+
+### Example Request
+
+```plaintext
+POST https://api.palmconnect.dev/api/v1/transactions/sync
+Content-Type: application/json
+
+{
+  "keyword": "food",
+  "start_datetime": "2023-01-01T00:00:00Z",
+  "end_datetime": "2023-01-31T23:59:59Z",
+  "category": ["groceries"],
+  "account": ["account1"],
+  "limit": 10
+}
+Example Response
+200 (OK): Transactions synced successfully.
+400 (Bad Request): Unexpected error.
+json
+Copy code
+{
+  "transactions": [
+    {
+      "account_id": "account1",
+      "amount": 100.0,
+      "date": "2023-01-15",
+      "category": "groceries",
+      "name": "Grocery Store"
+    }
+  ],
+  "has_more": false,
+  "next_cursor": "cursor123"
+}
+Error Response
+json
+Copy code
+{
+  "error": 400,
+  "message": "Unexpected error occurred while syncing transactions."
+}
+yaml
+Copy code
+
+#### create-transaction.mdx
+
+```mdx
+---
+title: 'Create Transaction'
+openapi: 'POST /v1/transactions'
+---
+
+## Create Transaction
+
+`POST /v1/transactions`
+
+Creates a new transaction.
+
+### Request Body
+
+The request body should contain a JSON object representing the transaction to be created.
+
+#### CreateTransactionRequest Properties
+
+- `transaction` (required): The transaction object to be created.
+
+### Example Request
+
+```plaintext
+POST https://api.palmconnect.dev/api/v1/transactions
+Content-Type: application/json
+
+{
+  "transaction": {
+    "account_id": "account1",
+    "amount": 50.0,
+    "date": "2023-01-10",
+    "category": "restaurant",
+    "name": "Restaurant"
+  }
+}
+Example Response
+200 (OK): Transaction created successfully.
+400 (Bad Request): Unexpected error.
