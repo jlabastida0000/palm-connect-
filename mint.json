@@ -1,63 +1,5 @@
-mint.json
-├── introduction.mdx
-├── quickstart.mdx
-├── authentication
-│   ├── overview.mdx
-│   ├── api-keys.mdx
-│   └── oauth.mdx
-├── endpoints
-│   ├── profiles
-│   │   ├── overview.mdx
-│   │   ├── create.mdx
-│   │   ├── retrieve.mdx
-│   │   ├── update.mdx
-│   │   └── delete.mdx
-│   ├── listings
-│   │   ├── overview.mdx
-│   │   ├── search.mdx
-│   │   ├── claim.mdx
-│   │   └── manage.mdx
-│   ├── filings
-│   │   ├── overview.mdx
-│   │   ├── create.mdx
-│   │   ├── submit.mdx
-│   │   ├── status.mdx
-│   │   └── history.mdx
-│   ├── batch-operations
-│   │   ├── overview.mdx
-│   │   └── examples.mdx
-│   └── webhooks
-│       ├── overview.mdx
-│       ├── configuration.mdx
-│       └── events.mdx
-├── integrations
-│   ├── overview.mdx
-│   ├── widgets
-│   │   ├── profile-widget.mdx
-│   │   └── search-widget.mdx
-│   └── sso
-│       ├── setup.mdx
-│       └── configuration.mdx
-├── guides
-│   ├── profile-management.mdx
-│   ├── compliance-tracking.mdx
-│   ├── stakeholder-management.mdx
-│   └── search-implementation.mdx
-├── api-reference
-│   ├── openapi.yaml
-│   ├── errors.mdx
-│   └── rate-limits.mdx
-└── resources
-    ├── changelog.mdx
-    ├── faq.mdx
-    └── support.mdx
-
-Key files:
-
-1. mint.json
-```json
 {
-  "name": "Palm API Documentation",
+  "name": "Palm API",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -67,6 +9,12 @@ Key files:
     "primary": "#0069ED",
     "light": "#4D9CFF",
     "dark": "#0046A3"
+  },
+  "api": {
+    "baseUrl": "https://api.palm.io/v1",
+    "auth": {
+      "method": "bearer"
+    }
   },
   "topbarLinks": [
     {
@@ -87,29 +35,52 @@ Key files:
     {
       "name": "Changelog",
       "icon": "list",
-      "url": "resources/changelog"
+      "url": "changelog"
     }
   ],
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "quickstart"]
+      "pages": ["introduction", "quickstart", "authentication"]
     },
     {
-      "group": "Authentication",
+      "group": "API Reference",
       "pages": [
-        "authentication/overview",
-        "authentication/api-keys",
-        "authentication/oauth"
+        "api-reference/profiles",
+        "api-reference/listings",
+        "api-reference/filings",
+        "api-reference/webhooks"
       ]
     },
     {
-      "group": "Core Concepts",
+      "group": "Profiles",
       "pages": [
-        "endpoints/profiles/overview",
-        "endpoints/listings/overview",
-        "endpoints/filings/overview",
-        "endpoints/webhooks/overview"
+        "api-reference/profiles/create",
+        "api-reference/profiles/get",
+        "api-reference/profiles/update",
+        "api-reference/profiles/delete"
+      ]
+    },
+    {
+      "group": "Listings",
+      "pages": [
+        "api-reference/listings/search",
+        "api-reference/listings/claim"
+      ]
+    },
+    {
+      "group": "Filings",
+      "pages": [
+        "api-reference/filings/create",
+        "api-reference/filings/submit",
+        "api-reference/filings/history"
+      ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "api-reference/webhooks/setup",
+        "api-reference/webhooks/events"
       ]
     }
   ],
