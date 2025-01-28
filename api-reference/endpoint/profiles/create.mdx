@@ -1,0 +1,43 @@
+---
+title: 'Create Profile'
+api: 'POST /profiles'
+description: 'Create a new business profile'
+---
+
+Create a new business profile with basic information and compliance details.
+
+### Body Parameters
+
+<ParamField body="name" type="string" required>
+  The business name
+</ParamField>
+
+<ParamField body="entityType" type="string" required>
+  The type of entity (e.g., CORPORATION, LLC)
+</ParamField>
+
+<ParamField body="jurisdiction" type="string" required>
+  State or jurisdiction of formation
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="string">
+  Unique identifier for the profile
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Business name
+</ResponseField>
+
+<RequestExample>
+```bash
+curl --request POST \
+  --url https://api.palm.io/v1/profiles \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Acme Corporation",
+    "entityType": "CORPORATION",
+    "jurisdiction": "CA"
+  }'
