@@ -1,91 +1,120 @@
+mint.json
+├── introduction.mdx
+├── quickstart.mdx
+├── authentication
+│   ├── overview.mdx
+│   ├── api-keys.mdx
+│   └── oauth.mdx
+├── endpoints
+│   ├── profiles
+│   │   ├── overview.mdx
+│   │   ├── create.mdx
+│   │   ├── retrieve.mdx
+│   │   ├── update.mdx
+│   │   └── delete.mdx
+│   ├── listings
+│   │   ├── overview.mdx
+│   │   ├── search.mdx
+│   │   ├── claim.mdx
+│   │   └── manage.mdx
+│   ├── filings
+│   │   ├── overview.mdx
+│   │   ├── create.mdx
+│   │   ├── submit.mdx
+│   │   ├── status.mdx
+│   │   └── history.mdx
+│   ├── batch-operations
+│   │   ├── overview.mdx
+│   │   └── examples.mdx
+│   └── webhooks
+│       ├── overview.mdx
+│       ├── configuration.mdx
+│       └── events.mdx
+├── integrations
+│   ├── overview.mdx
+│   ├── widgets
+│   │   ├── profile-widget.mdx
+│   │   └── search-widget.mdx
+│   └── sso
+│       ├── setup.mdx
+│       └── configuration.mdx
+├── guides
+│   ├── profile-management.mdx
+│   ├── compliance-tracking.mdx
+│   ├── stakeholder-management.mdx
+│   └── search-implementation.mdx
+├── api-reference
+│   ├── openapi.yaml
+│   ├── errors.mdx
+│   └── rate-limits.mdx
+└── resources
+    ├── changelog.mdx
+    ├── faq.mdx
+    └── support.mdx
+
+Key files:
+
+1. mint.json
+```json
 {
-  "$schema": "https://mintlify.com/schema.json",
-  "name": "Getting Started with Palm Connect",
+  "name": "Palm API Documentation",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
-    "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
-    }
+    "primary": "#0069ED",
+    "light": "#4D9CFF",
+    "dark": "#0046A3"
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "https://support.palm.io"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "url": "https://app.palm.io"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "API Reference",
+      "icon": "code",
+      "url": "api-reference"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Changelog",
+      "icon": "list",
+      "url": "resources/changelog"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Getting Started",
+      "pages": ["introduction", "quickstart"]
+    },
+    {
+      "group": "Authentication",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "authentication/overview",
+        "authentication/api-keys",
+        "authentication/oauth"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Core Concepts",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
-      ]
-    },
-    {
-      "group": "API Documentation",
-      "pages": [
-        "api-reference/introduction"
-      ]
-    },
-    {
-      "group": "Palm Connect API's",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "endpoints/profiles/overview",
+        "endpoints/listings/overview",
+        "endpoints/filings/overview",
+        "endpoints/webhooks/overview"
       ]
     }
   ],
   "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "github": "https://github.com/palm-api",
+    "discord": "https://discord.gg/palm"
   }
 }
