@@ -44,43 +44,38 @@
       "pages": ["introduction", "quickstart", "authentication"]
     },
     {
-      "group": "API Reference",
+      "group": "Profiles API",
       "pages": [
-        {
-          "group": "Profiles",
-          "pages": [
-            "api-reference/profiles/overview",
-            "api-reference/profiles/create",
-            "api-reference/profiles/get",
-            "api-reference/profiles/update",
-            "api-reference/profiles/delete"
-          ]
-        },
-        {
-          "group": "Listings",
-          "pages": [
-            "api-reference/listings/overview",
-            "api-reference/listings/search",
-            "api-reference/listings/claim"
-          ]
-        },
-        {
-          "group": "Filings",
-          "pages": [
-            "api-reference/filings/overview",
-            "api-reference/filings/create",
-            "api-reference/filings/submit",
-            "api-reference/filings/history"
-          ]
-        },
-        {
-          "group": "Webhooks",
-          "pages": [
-            "api-reference/webhooks/overview",
-            "api-reference/webhooks/setup",
-            "api-reference/webhooks/events"
-          ]
-        }
+        "api-reference/profiles/overview",
+        "api-reference/profiles/create",
+        "api-reference/profiles/get",
+        "api-reference/profiles/update",
+        "api-reference/profiles/delete"
+      ]
+    },
+    {
+      "group": "Listings API",
+      "pages": [
+        "api-reference/listings/overview",
+        "api-reference/listings/search",
+        "api-reference/listings/claim"
+      ]
+    },
+    {
+      "group": "Filings API",
+      "pages": [
+        "api-reference/filings/overview",
+        "api-reference/filings/create",
+        "api-reference/filings/submit",
+        "api-reference/filings/history"
+      ]
+    },
+    {
+      "group": "Webhooks API",
+      "pages": [
+        "api-reference/webhooks/overview",
+        "api-reference/webhooks/setup",
+        "api-reference/webhooks/events"
       ]
     }
   ],
