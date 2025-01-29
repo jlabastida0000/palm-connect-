@@ -46,19 +46,19 @@
     {
       "group": "API Reference",
       "pages": [
-        "api-reference/profiles",
-        "api-reference/listings",
-        "api-reference/filings",
-        "api-reference/webhooks"
+        "api-reference/endpoint/profiles",
+        "api-reference/endpoint/listings",
+        "api-reference/endpont/filings",
+        "api-reference/endpoint/webhooks"
       ]
     },
     {
       "group": "Profiles",
       "pages": [
-        "api-reference/profiles/create",
-        "api-reference/profiles/get",
-        "api-reference/profiles/update",
-        "api-reference/profiles/delete"
+        "api-reference/endpoint/profiles/create",
+        "api-reference/endpoint/profiles/get",
+        "api-reference/endpoint/profiles/update",
+        "api-reference/endpoint/profiles/delete"
       ]
     },
     {
