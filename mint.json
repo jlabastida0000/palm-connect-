@@ -1,64 +1,23 @@
 {
-  "name": "Palm API",
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "favicon": "/favicon.png",
-  "colors": {
-    "primary": "#0069ED",
-    "light": "#4D9CFF",
-    "dark": "#0046A3"
-  },
+  "name": "Palm API Documentation",
   "api": {
     "baseUrl": "https://api.palm.io/v1",
     "auth": {
       "method": "bearer"
     }
   },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "https://support.palm.io"
-    }
-  ],
-  "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://app.palm.io"
-  },
-  "anchors": [
-    {
-      "name": "API Reference",
-      "icon": "code",
-      "url": "api-reference"
-    },
-    {
-      "name": "Changelog",
-      "icon": "list",
-      "url": "changelog"
-    }
-  ],
   "navigation": [
     {
       "group": "Getting Started",
       "pages": ["introduction", "quickstart", "authentication"]
     },
     {
-      "group": "API Reference",
-      "pages": [
-        "api-reference/endpoint/profiles",
-        "api-reference/endpoint/listings",
-        "api-reference/endpont/filings",
-        "api-reference/endpoint/webhooks"
-      ]
-    },
-    {
       "group": "Profiles",
       "pages": [
-        "api-reference/endpoint/profiles/create",
-        "api-reference/endpoint/profiles/get",
-        "api-reference/endpoint/profiles/update",
-        "api-reference/endpoint/profiles/delete"
+        "api-reference/profiles/create",
+        "api-reference/profiles/get",
+        "api-reference/profiles/update",
+        "api-reference/profiles/delete"
       ]
     },
     {
@@ -72,8 +31,7 @@
       "group": "Filings",
       "pages": [
         "api-reference/filings/create",
-        "api-reference/filings/submit",
-        "api-reference/filings/history"
+        "api-reference/filings/submit"
       ]
     },
     {
@@ -83,9 +41,5 @@
         "api-reference/webhooks/events"
       ]
     }
-  ],
-  "footerSocials": {
-    "github": "https://github.com/palm-api",
-    "discord": "https://discord.gg/palm"
-  }
+  ]
 }
