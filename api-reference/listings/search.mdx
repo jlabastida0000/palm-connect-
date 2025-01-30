@@ -1,0 +1,97 @@
+---
+title: 'Search Listings'
+description: 'Search and filter business listings across the database'
+api: 'GET /api/v1/listings'
+---
+
+Search through the public business listings database using various filters and parameters.
+
+## Query Parameters
+
+<ParamField query="q" type="string">
+  General search query text to match against business names, DBAs, and other fields
+</ParamField>
+
+<ParamField query="location" type="string">
+  Geographical filter (city, state, or zip code)
+</ParamField>
+
+<ParamField query="industry" type="string">
+  Industry category filter
+</ParamField>
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField query="limit" type="integer" default="20" max="100">
+  Number of results per page
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="BusinessListing[]">
+  Array of business listing objects matching the search criteria
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  <Expandable title="Metadata properties">
+    <ResponseField name="total" type="integer">
+      Total number of results matching the query
+    </ResponseField>
+    <ResponseField name="page" type="integer">
+      Current page number
+    </ResponseField>
+    <ResponseField name="pages" type="integer">
+      Total number of pages
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash Example Request
+curl --request GET \
+  --url 'https://api.getpalm.com/v1/listings?q=coffee&location=seattle&page=1&limit=20' \
+  --header 'Accept: application/json'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "id": "0d9f5013-2838-4e70-8375-e0ee3fef6bad",
+      "business_name": "Seattle Coffee Works",
+      "dba_names": ["SCW Downtown"],
+      "entity_type": "llc",
+      "formation_state": "WA",
+      "formation_date": "2015-03-15",
+      "status": "active",
+      "registered_address": {
+        "street": "123 Pike St",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98101"
+      },
+      "entity_number": "UBI-601234567",
+      "jurisdiction": "WA",
+      "industry_categories": ["Food & Beverage", "Retail"],
+      "location_coordinates": {
+        "latitude": 47.6097,
+        "longitude": -122.3331
+      },
+      "last_verified": "2024-12-01T08:00:00Z",
+      "confidence_score": 0.95,
+      "is_claimed": false
+    }
+    // ... more results
+  ],
+  "metadata": {
+    "total": 156,
+    "page": 1,
+    "pages": 8
+  }
+}
+```
+</ResponseExample>
