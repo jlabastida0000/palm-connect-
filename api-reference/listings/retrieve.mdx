@@ -1,0 +1,90 @@
+---
+title: 'Retrieve Listing'
+description: 'Get detailed information about a specific business listing'
+api: 'GET /api/v1/listings/{listingId}'
+---
+
+Retrieve detailed information about a specific business listing using its unique identifier.
+
+## Path Parameters
+
+<ParamField path="listingId" type="string" required>
+  Unique identifier of the business listing
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="BusinessListing">
+  Detailed business listing object
+</ResponseField>
+
+<RequestExample>
+```bash Example Request
+curl --request GET \
+  --url 'https://api.getpalm.com/v1/listings/0d9f5013-2838-4e70-8375-e0ee3fef6bad' \
+  --header 'Accept: application/json'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "id": "0d9f5013-2838-4e70-8375-e0ee3fef6bad",
+    "business_name": "Seattle Coffee Works",
+    "dba_names": ["SCW Downtown"],
+    "entity_type": "llc",
+    "formation_state": "WA",
+    "formation_date": "2015-03-15",
+    "status": "active",
+    "registered_address": {
+      "street": "123 Pike St",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98101"
+    },
+    "mailing_address": {
+      "street": "PO Box 12345",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98101"
+    },
+    "entity_number": "UBI-601234567",
+    "jurisdiction": "WA",
+    "registered_agent": {
+      "name": "John Smith",
+      "address": {
+        "street": "456 Pine St",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98101"
+      }
+    },
+    "industry_categories": ["Food & Beverage", "Retail"],
+    "location_coordinates": {
+      "latitude": 47.6097,
+      "longitude": -122.3331
+    },
+    "website": "https://seattlecoffeeworks.com",
+    "social_profiles": [
+      {
+        "type": "facebook",
+        "url": "https://facebook.com/seattlecoffeeworks"
+      }
+    ],
+    "last_verified": "2024-12-01T08:00:00Z",
+    "confidence_score": 0.95,
+    "data_completeness": 0.85,
+    "is_claimed": false,
+    "data_sources": [
+      {
+        "source_name": "WA Secretary of State",
+        "source_type": "government",
+        "last_updated": "2024-11-15T10:30:00Z",
+        "confidence": 0.95
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
