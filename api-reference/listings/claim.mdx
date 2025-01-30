@@ -1,0 +1,114 @@
+---
+title: 'Claim Listing'
+description: 'Initiate a claim process for a business listing'
+api: 'POST /api/v1/listings/{listingId}/claim'
+---
+
+Start the process of claiming ownership of a business listing. This creates a claim request that will need to be verified.
+
+## Path Parameters
+
+<ParamField path="listingId" type="string" required>
+  Unique identifier of the business listing to claim
+</ParamField>
+
+## Request Body
+
+<ParamField body="claimant_info" type="object" required>
+  <Expandable title="Claimant Information">
+    <ParamField body="name" type="string" required>
+      Full name of the person claiming the business
+    </ParamField>
+    <ParamField body="role" type="string" required>
+      Role in the business (e.g., "Owner", "Officer")
+    </ParamField>
+    <ParamField body="contact" type="object" required>
+      <Expandable title="Contact Information">
+        <ParamField body="email" type="string" required>
+          Email address for verification
+        </ParamField>
+        <ParamField body="phone" type="string" required>
+          Phone number for verification
+        </ParamField>
+        <ParamField body="address" type="object" required>
+          Physical address for verification
+        </ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="verification_documents" type="array">
+  Array of document references supporting the claim
+</ParamField>
+
+<ParamField body="verification_method" type="string" required>
+  Method of verification (e.g., "document", "phone", "email")
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object">
+  <Expandable title="Response Properties">
+    <ResponseField name="claim_id" type="string">
+      Unique identifier for the claim request
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current status of the claim ("pending")
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      Timestamp of claim creation
+    </ResponseField>
+    <ResponseField name="next_steps" type="array">
+      Array of steps required to complete verification
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash Example Request
+curl --request POST \
+  --url 'https://api.getpalm.com/v1/listings/0d9f5013-2838-4e70-8375-e0ee3fef6bad/claim' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "claimant_info": {
+      "name": "Jane Smith",
+      "role": "Owner",
+      "contact": {
+        "email": "jane@seattlecoffeeworks.com",
+        "phone": "+12065551234",
+        "address": {
+          "street": "123 Pike St",
+          "city": "Seattle",
+          "state": "WA",
+          "zip": "98101"
+        }
+      }
+    },
+    "verification_method": "document",
+    "verification_documents": ["doc_123", "doc_456"]
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "claim_id": "clm_01H9X7Z2Y4K8G6R5M3N2P1Q0W9",
+    "status": "pending",
+    "created_at": "2024-01-30T15:30:00Z",
+    "next_steps": [
+      {
+        "type": "document_verification",
+        "description": "We will review your submitted documents within 1-2 business days"
+      },
+      {
+        "type": "email_verification",
+        "description": "Please check your email for a verification link"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
