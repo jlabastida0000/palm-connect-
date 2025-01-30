@@ -1,298 +1,862 @@
+
+---
+
+```mdx
 ---
 title: 'Business Listings'
 description: 'Search, retrieve, and manage business listings across multiple jurisdictions'
 ---
 
 import { Card, CardGroup } from '@/components/card'
+import { Tab, Tabs } from '@/components/tabs'
+import { CodeGroup } from '@/components/code-group'
+import { ResponseField, Expandable } from '@/components/response-field'
 
 # Business Listings
 
 The Public Listings API provides access to a comprehensive database of business entities aggregated from authoritative government sources. This system decouples public data aggregation from private business workflows, creating a robust and secure system for managing business information.
 
+## Available Operations
+
 <CardGroup cols={2}>
-  <Card title="Search Listings" icon="search" href="/api-reference/listings/search">
-    Search and filter business records
+  <Card title="Search Listings" icon="magnifying-glass" href="/api-reference/listings/search">
+    Search and filter business records across multiple jurisdictions
   </Card>
   <Card title="Get Listing" icon="eye" href="/api-reference/listings/retrieve">
-    Retrieve detailed listing information
+    Retrieve detailed information for a specific business listing
   </Card>
   <Card title="Claim Listing" icon="flag" href="/api-reference/listings/claim">
-    Claim ownership of a business listing
+    Initiate the process of claiming ownership of a business listing
   </Card>
   <Card title="Get Claim Status" icon="check" href="/api-reference/listings/claim-status">
-    Check status of a claim request
+    Check the current status of a claim request
   </Card>
 </CardGroup>
 
 ## System Architecture
 
-The listings system is built to handle large-scale data aggregation and real-time search capabilities.
+The listings system is designed for high-scale data processing and real-time search capabilities. Here are different views of the architecture:
 
-</Mermaid>
-flowchart TB
-    subgraph DataIngestion["Data Ingestion Layer"]
-        A[State Website Scrapers] --> B[Validation Queue]
-        B --> C[Raw Data Repository]
-    end
+<Tabs>
+  <Tab title="Data Flow">
+    ```mermaid
+    graph TB
+      A[Data Sources] --> B[Ingestion Service]
+      B --> C[Validation Queue]
+      C --> D[Processing Service]
+      D --> E[Business Rules Engine]
+      E --> F[Entity Resolution]
+      F --> G[Primary Database]
+      G --> H[Search Index]
+      G --> I[Public API]
+      G --> J[Private API]
+      K[Claim Service] --> L[Verification Engine]
+      L --> M[Profile Database]
+      I --> N[Public Access]
+      J --> O[Business Portal]
+      style A fill:#f9f,stroke:#333
+      style G fill:#9cf,stroke:#333
+      style M fill:#9cf,stroke:#333
+      style H fill:#fcf,stroke:#333
+    ```
+  </Tab>
+  <Tab title="Component View">
+    ```mermaid
+    graph LR
+      subgraph Storage
+        DB[(Primary DB)]
+        Search[[Search Index]]
+        Cache((Redis Cache))
+      end
+      subgraph Services
+        API[API Gateway]
+        Auth[Auth Service]
+        Search_Svc[Search Service]
+        Profile[Profile Service]
+      end
+      subgraph Processing
+        ETL[ETL Pipeline]
+        Match[Entity Matching]
+        Enrich[Data Enrichment]
+      end
+      API --> Auth
+      API --> Search_Svc
+      API --> Profile
+      Search_Svc --> Search
+      Search_Svc --> Cache
+      Profile --> DB
+      ETL --> Match
+      Match --> Enrich
+      Enrich --> DB
+    ```
+  </Tab>
+  <Tab title="User Flow">
+    ```mermaid
+    sequenceDiagram
+      participant U as User
+      participant API as Public API
+      participant S as Search Service
+      participant V as Verification
+      participant DB as Database
+      U->>API: Search Request
+      API->>S: Process Search
+      S->>DB: Query Data
+      DB-->>S: Return Results
+      S-->>API: Format Response
+      API-->>U: Display Results
+      U->>API: Claim Request
+      API->>V: Initiate Verification
+      V->>DB: Create Claim Record
+      DB-->>V: Confirm Creation
+      V-->>API: Return Claim Status
+      API-->>U: Show Confirmation
+    ```
+  </Tab>
+</Tabs>
 
-    subgraph TransformationLayer["Transformation Layer"]
-        D[Normalization] --> E[Data Enrichment]
-        E --> F[Entity Matching]
-        F --> G[Deduplication]
-    end
+## Key Features
 
-    subgraph Storage["Core Data Storage"]
-        H[(Business Listings DB)]
-        I[(Business Profiles DB)]
-    end
+### Data Aggregation
+- Real-time data collection from state registries
+- Automated validation and standardization
+- Multi-source entity resolution
+- Continuous data refresh cycles
 
-    subgraph SearchLayer["Search Layer"]
-        J[Full-text Search Index]
-        K[Geospatial Index]
-    end
+### Search Capabilities
+- Full-text search across all fields
+- Geospatial queries for location-based search
+- Fuzzy matching for business names
+- Advanced filtering options
+- Real-time results with caching
 
-    subgraph AccessLayer["Access Layer"]
-        L[Public API]
-        M[Private API]
-        N[Claim System]
-    end
-
-    C --> D
-    G --> H
-    H --> J
-    H --> K
-    H --> L
-    I --> M
-    N --> I
-
-    L --> |Read Only| Users[Public Users]
-    M --> |Authenticated| Business[Business Owners]
-    Users --> |Initiate Claim| N
-    N --> |Verification| Business
-</Mermaid>
+### Business Verification
+- Multi-step verification process
+- Document-based validation
+- Agent verification system
+- EIN matching capabilities
+- Manual review options
 
 ## Quick Start
 
-### Search for Listings
-
 <CodeGroup>
-```bash cURL
-curl -X GET "https://api.palm.com/v1/listings/search?query=acme&jurisdiction=CA" \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-```typescript Node
-const listings = await palm.listings.search({
-  query: 'acme',
-  jurisdiction: 'CA'
-});
-```
-
-```python Python
-listings = palm.listings.search(
-    query='acme',
-    jurisdiction='CA'
-)
-```
-</CodeGroup>
-
-### Get a Specific Listing
-
-<CodeGroup>
-```bash cURL
-curl -X GET "https://api.palm.com/v1/listings/list_123abc" \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-```typescript Node
-const listing = await palm.listings.retrieve('list_123abc');
-```
-
-```python Python
-listing = palm.listings.retrieve('list_123abc')
-```
-</CodeGroup>
-
-## Core Data Models
-
-### Business Listing Object
 
 ```typescript
-interface BusinessListing {
-  id: string;                    // Unique identifier
-  business_name: string;         // Legal business name
-  dba_names: string[];          // Doing Business As names
-  entity_type: string;          // Business structure type
-  formation_state: string;      // State of formation
-  formation_date: string;       // Date of formation
-  status: string;              // Current status
-  registered_address: Address;  // Primary address
-  mailing_address?: Address;    // Optional mailing address
-  entity_number: string;       // State registration number
-  jurisdiction: string;        // Registration jurisdiction
-  registered_agent?: {
-    name: string;
-    address: Address;
-  };
-  data_sources: DataSourceMetadata[];
-  industry_categories?: string[];
-  location_coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
-  website?: string;
-  social_profiles?: SocialProfile[];
-  last_verified: string;
-  confidence_score: number;
-  data_completeness: number;
-  is_claimed: boolean;
-  claim_status?: 'pending' | 'verified' | 'rejected';
-  has_profile?: boolean;
-}
-```
+// TypeScript SDK
+import { PalmAPI } from '@palm/sdk';
 
-### Search Parameters
+const palm = new PalmAPI({
+  apiKey: 'YOUR_API_KEY',
+  environment: 'production'
+});
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `query` | string | Business name or ID | `acme` |
-| `jurisdiction` | string | State code | `CA` |
-| `status` | string | Registration status | `active` |
-| `entityType` | string | Type of entity | `corporation` |
-| `page` | number | Page number | `1` |
-| `limit` | number | Results per page | `10` |
+// Search for businesses
+const searchResults = await palm.listings.search({
+  query: 'acme',
+  jurisdiction: 'CA',
+  entityType: 'corporation',
+  status: 'active'
+});
 
-## Claiming a Listing
+// Get specific listing
+const listing = await palm.listings.retrieve('list_123abc');
 
-<CardGroup cols={2}>
-  <Card title="Document Upload" icon="file-upload">
-    Submit formation documents or business licenses
-  </Card>
-  <Card title="Agent Verification" icon="user-check">
-    Verify through registered agent details
-  </Card>
-  <Card title="EIN Match" icon="hashtag">
-    Match employer identification number
-  </Card>
-  <Card title="Manual Review" icon="eye">
-    Submit for manual verification process
-  </Card>
-</CardGroup>
-
-### Initiate a Claim
-
-<CodeGroup>
-```bash cURL
-curl -X POST "https://api.palm.com/v1/listings/{listingId}/claim" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -d '{
-    "verificationMethod": "DOCUMENT",
-    "documents": [
-      {
-        "type": "FORMATION",
-        "file": "base64_encoded_file"
-      }
-    ]
-  }'
-```
-
-```typescript Node
-const claim = await palm.listings.claim(listingId, {
+// Claim a listing
+const claim = await palm.listings.claim('list_123abc', {
   verificationMethod: 'DOCUMENT',
   documents: [{
     type: 'FORMATION',
     file: documentFile
-  }]
+  }],
+  contact: {
+    name: 'John Doe',
+    email: 'john@acme.com',
+    phone: '+1234567890'
+  }
 });
 ```
+
+```python
+# Python SDK
+from palm import Client
+
+palm = Client(api_key='YOUR_API_KEY')
+
+# Search for businesses
+results = palm.listings.search(
+    query='acme',
+    jurisdiction='CA',
+    entity_type='corporation',
+    status='active'
+)
+
+# Get specific listing
+listing = palm.listings.retrieve('list_123abc')
+
+# Claim a listing
+claim = palm.listings.claim(
+    'list_123abc',
+    verification_method='DOCUMENT',
+    documents=[{
+        'type': 'FORMATION',
+        'file': document_file
+    }],
+    contact={
+        'name': 'John Doe',
+        'email': 'john@acme.com',
+        'phone': '+1234567890'
+    }
+)
+```
+
+```ruby
+# Ruby SDK
+require 'palm'
+
+palm = Palm::Client.new(api_key: 'YOUR_API_KEY')
+
+# Search for businesses
+results = palm.listings.search(
+  query: 'acme',
+  jurisdiction: 'CA',
+  entity_type: 'corporation',
+  status: 'active'
+)
+
+# Get specific listing
+listing = palm.listings.retrieve('list_123abc')
+
+# Claim a listing
+claim = palm.listings.claim(
+  'list_123abc',
+  verification_method: 'DOCUMENT',
+  documents: [{
+    type: 'FORMATION',
+    file: document_file
+  }],
+  contact: {
+    name: 'John Doe',
+    email: 'john@acme.com',
+    phone: '+1234567890'
+  }
+)
+```
+
 </CodeGroup>
 
-### Claim Status Definitions
+## Data Models
 
-| Status | Description |
-|--------|-------------|
-| `UNCLAIMED` | No active claims |
-| `PENDING` | Under review |
-| `VERIFIED` | Approved |
-| `REJECTED` | Declined |
-| `DISPUTED` | In dispute |
+### Business Listing Object
+
+<CodeGroup>
+
+```typescript
+// Full Object
+interface BusinessListing {
+  // Core Information
+  id: string;                    
+  business_name: string;         
+  dba_names: string[];          
+  entity_type: EntityType;       
+  formation_state: string;      
+  formation_date: string;       
+  status: EntityStatus;         
+  
+  // Address Information
+  registered_address: Address;  
+  mailing_address?: Address;    
+  
+  // Registration Details
+  entity_number: string;       
+  jurisdiction: string;        
+  registered_agent?: RegisteredAgent;
+  
+  // Source Information
+  data_sources: DataSourceMetadata[];
+  last_updated: string;
+  last_verified: string;
+  
+  // Classification
+  industry_categories?: string[];
+  naics_codes?: string[];
+  sic_codes?: string[];
+  
+  // Location Data
+  location_coordinates?: GeoCoordinates;
+  
+  // Online Presence
+  website?: string;
+  social_profiles?: SocialProfile[];
+  
+  // Quality Metrics
+  confidence_score: number;
+  data_completeness: number;
+  
+  // Claim Status
+  is_claimed: boolean;
+  claim_status?: ClaimStatus;
+  has_profile?: boolean;
+  
+  // Compliance
+  good_standing: boolean;
+  filing_status: FilingStatus;
+  renewal_date?: string;
+}
+```
+
+```typescript
+// Supporting Types
+interface Address {
+  street1: string;
+  street2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  type: AddressType;
+  validated: boolean;
+}
+
+interface RegisteredAgent {
+  name: string;
+  type: 'INDIVIDUAL' | 'BUSINESS';
+  address: Address;
+  appointment_date?: string;
+}
+
+interface DataSourceMetadata {
+  source_name: string;
+  source_type: 'GOVERNMENT' | 'COMMERCIAL' | 'USER_SUBMITTED';
+  last_updated: string;
+  confidence: number;
+  raw_data?: any;
+}
+
+interface GeoCoordinates {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+}
+
+interface SocialProfile {
+  platform: string;
+  url: string;
+  verified: boolean;
+}
+```
+
+</CodeGroup>
+
+## API Operations
+
+### Search Parameters
+
+<ResponseField name="query" type="string">
+  Text search query matching business names, DBAs, and registration numbers
+  
+  <Expandable title="Query Syntax">
+    - Exact phrase: `"acme corporation"`
+    - OR operation: `acme OR apex`
+    - Exclude terms: `-dissolved`
+    - Field specific: `name:acme`
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="filters" type="object">
+  Filter criteria for narrowing results
+  
+  <Expandable title="Available Filters">
+    - `jurisdiction`: State/territory code
+    - `entity_type`: Business structure
+    - `status`: Registration status
+    - `formation_date`: Date range
+    - `industry`: Industry categories
+    - `standing`: Good standing status
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="sort" type="object">
+  Result ordering preferences
+  
+  <Expandable title="Sort Options">
+    - `relevance`: Match score (default)
+    - `name`: Business name
+    - `formation_date`: Registration date
+    - `confidence`: Data confidence score
+  </Expandable>
+</ResponseField>
+
+### Verification Methods
+
+<CardGroup cols={2}>
+  <Card title="Document Upload" icon="file-upload">
+    Submit formation documents, licenses, or tax records
+    
+    - Articles of Incorporation
+    - Operating Agreements
+    - EIN Letters
+    - Business Licenses
+  </Card>
+  
+  <Card title="Agent Verification" icon="user-check">
+    Verify through registered agent information
+    
+    - Agent Name Match
+    - Address Verification
+    - Appointment Validation
+  </Card>
+  
+  <Card title="Identity Verification" icon="id-card">
+    Verify business owner identity
+    
+    - Government ID
+    - Live Photo Match
+    - Background Check
+  </Card>
+  
+  <Card title="Manual Review" icon="magnifying-glass">
+    Human verification process
+    
+    - Document Review
+    - Phone Verification
+    - Physical Location Check
+  </Card>
+</CardGroup>
+
+## Advanced Features
+
+### Entity Resolution
+
+The system uses advanced entity resolution to:
+- Match businesses across multiple data sources
+- Prevent duplicate listings
+- Combine partial information into complete profiles
+- Track business changes over time
+
+```mermaid
+graph TD
+    A[Source Records] --> B{Match Engine}
+    B --> C[Exact Match]
+    B --> D[Fuzzy Match]
+    B --> E[No Match]
+    C --> F[Update Existing]
+    D --> G[Manual Review]
+    E --> H[Create New]
+    F --> I[Master Record]
+    G --> I
+    H --> I
+```
+
+### Data Quality Scoring
+
+<CardGroup cols={2}>
+  <Card title="Confidence Score" icon="chart-line">
+    Calculated based on:
+    - Source reliability
+    - Data freshness
+    - Cross-validation
+    - Verification status
+  </Card>
+  
+  <Card title="Completeness Score" icon="chart-pie">
+    Measures presence of:
+    - Required fields
+    - Optional details
+    - Supporting documents
+    - Verified information
+  </Card>
+</CardGroup>
 
 ## Error Handling
 
-<CodeGroup>
-```json 400 Invalid Request
-{
-  "error": {
-    "code": "INVALID_REQUEST",
-    "message": "Missing required fields",
-    "details": {
-      "fields": ["verificationMethod"]
-    }
-  }
-}
-```
+### Common Error Codes
 
-```json 404 Not Found
-{
-  "error": {
-    "code": "NOT_FOUND",
-    "message": "Listing not found",
-    "details": {
-      "id": "list_123abc"
-    }
-  }
-}
-```
+| Code               | Description                       | Resolution                     |
+|--------------------|-----------------------------------|--------------------------------|
+| `INVALID_REQUEST`  | Missing or invalid parameters     | Check request parameters       |
+| `NOT_FOUND`        | Resource doesn't exist            | Verify identifier              |
+| `RATE_LIMITED`     | Too many requests                 | Implement backoff              |
+| `UNAUTHORIZED`     | Invalid credentials               | Check API key                  |
+| `FORBIDDEN`        | Insufficient permissions          | Verify access level            |
+| `CONFLICT`         | Resource conflict                 | Check existing claims          |
 
-```json 429 Rate Limited
+### Error Response Format
+
+```json
 {
   "error": {
-    "code": "RATE_LIMIT_EXCEEDED",
-    "message": "Too many requests",
+    "code": "ERROR_CODE",
+    "message": "Human readable message",
     "details": {
-      "reset_at": "2024-01-30T16:00:00Z"
-    }
+      "field": "Specific field causing error",
+      "reason": "Detailed explanation",
+      "suggestion": "How to fix"
+    },
+    "request_id": "UUID for support reference",
+    "documentation_url": "Link to relevant docs"
   }
 }
 ```
-</CodeGroup>
 
 ## Best Practices
 
-1. **Search First**: Always search for existing listings before creating new profiles
-2. **Verify Information**: Cross-check listing details with official records
-3. **Document Ready**: Prepare verification documents before claiming
-4. **Monitor Status**: Use webhooks to track claim status changes
-5. **Handle Errors**: Implement proper error handling for all API responses
+### Search Optimization
+1. Use specific search terms
+2. Leverage filters for precision
+3. Handle pagination properly
+4. Cache frequent searches
+5. Implement rate limiting
 
-## Data Quality Features
+### Data Management
+1. Regular data refresh
+2. Monitor confidence scores
+3. Track data changes
+4. Implement webhooks
+5. Archive historical data
 
-- **Normalization**: Standardized data format across sources
-- **Deduplication**: Advanced entity matching prevents duplicates
-- **Enrichment**: Additional data points from various sources
-- **Confidence Scoring**: Quality scores based on verification status
+### Security
+1. Rotate API keys regularly
+2. Implement request signing
+3. Use TLS for all requests
+4. Monitor usage patterns
+5. Log access attempts
 
 ## Rate Limits
 
-| Endpoint | Rate Limit | Window |
-|----------|------------|--------|
-| Search | 100 requests | per minute |
-| Retrieve | 200 requests | per minute |
-| Claim | 10 requests | per minute |
+### Default Limits
+
+| Tier | Endpoint  | Rate | Window | Burst |
+|------|-----------|------|--------|-------|
+| Free | Search    | 100  | minute | 150   |
+| Free | Retrieve  | 200  | minute | 300   |
+| Free | Claim     | 10   | minute | 15    |
+| Pro  | Search    | 1000 | minute | 1500  |
+| Pro  | Retrieve  | 2000 | minute | 3000  |
+| Pro  | Claim     | 100  | minute | 150   |
+
+### Rate Limit Headers
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1706633400
+```
+
+## Webhooks
+
+### Available Events
+
+<CardGroup cols={2}>
+  <Card title="Listing Updates" icon="refresh">
+    - `listing.updated`
+    - `listing.verified`
+    - `listing.claimed`
+  </Card>
+  
+  <Card title="Claim Events" icon="flag">
+    - `claim.created`
+    - `claim.verified`
+    - `claim.rejected`
+  </Card>
+  
+  <Card title="Verification" icon="shield-check">
+    - `verification.started`
+    - `verification.completed`
+    - `verification.failed`
+  </Card>
+  
+  <Card title="Documents" icon="file">
+    - `document.uploaded`
+    - `document.verified`
+    - `document.rejected`
+  </Card>
+</CardGroup>
 
 ## Related Resources
 
 <CardGroup cols={2}>
-  <Card title="Business Verification" icon="shield-check" href="/guides/business-verification">
-    Learn about verification requirements and processes
+  <Card title="Business Verification Guide" icon="shield-check" href="/guides/business-verification">
+    Comprehensive guide to verification requirements and processes
+    - Document requirements
+    - Verification workflows
+    - Best practices
   </Card>
+  
   <Card title="Document Management" icon="file" href="/api-reference/documents/overview">
     Handle verification documents efficiently
+    - Upload guidelines
+    - Supported formats
+    - Storage policies
   </Card>
-  <Card title="Webhooks Guide" icon="bell" href="/guides/webhook-integration">
-    Set up status change notifications
+  
+  <Card title="Webhook Integration" icon="bell" href="/guides/webhook-integration">
+    Real-time notifications for listing changes
+    - Event types
+    - Payload formats
+    - Security measures
   </Card>
+  
   <Card title="API Security" icon="lock" href="/guides/api-security">
-    Understand security best practices
+    Security best practices and guidelines
+    - Authentication
+    - Authorization
+    - Data protection
   </Card>
 </CardGroup>
+
+## Data Enrichment
+
+### Available Enrichments
+
+<Tabs>
+  <Tab title="Business Information">
+    ```mermaid
+    graph TD
+      A[Raw Listing] --> B[Name Standardization]
+      A --> C[Address Validation]
+      A --> D[Phone Verification]
+      B --> E[DBA Matching]
+      C --> F[Geocoding]
+      D --> G[Carrier Lookup]
+      E --> H[Enriched Listing]
+      F --> H
+      G --> H
+    ```
+  </Tab>
+  <Tab title="Industry Classification">
+    ```mermaid
+    graph TD
+      A[Business Name] --> B[Text Analysis]
+      A --> C[Website Scraping]
+      B --> D[Industry Matching]
+      C --> D
+      D --> E[NAICS Codes]
+      D --> F[SIC Codes]
+      E --> G[Enriched Profile]
+      F --> G
+    ```
+  </Tab>
+  <Tab title="Online Presence">
+    ```mermaid
+    graph TD
+      A[Domain Name] --> B[Website Discovery]
+      A --> C[Social Media Search]
+      B --> D[Content Analysis]
+      C --> E[Profile Verification]
+      D --> F[Enriched Data]
+      E --> F
+    ```
+  </Tab>
+</Tabs>
+
+## Advanced Search Features
+
+### Geospatial Search
+
+```typescript
+// Search businesses within radius
+const nearbyBusinesses = await palm.listings.search({
+  location: {
+    latitude: 37.7749,
+    longitude: -122.4194,
+    radius: 5, // miles
+  },
+  type: 'restaurant'
+});
+
+// Search by boundary
+const businessesInArea = await palm.listings.search({
+  boundary: {
+    type: 'polygon',
+    coordinates: [
+      [lon1, lat1],
+      [lon2, lat2],
+      [lon3, lat3]
+    ]
+  }
+});
+```
+
+### Fuzzy Matching
+
+<CodeGroup>
+```typescript
+// Fuzzy Name Match
+const results = await palm.listings.search({
+  query: 'acme corp',
+  fuzzy: {
+    enabled: true,
+    threshold: 0.8,
+    maxExpansions: 50
+  }
+});
+```
+
+```typescript
+// Phonetic Match
+const results = await palm.listings.search({
+  query: 'teknology',
+  matching: {
+    type: 'phonetic',
+    algorithm: 'double_metaphone'
+  }
+});
+```
+</CodeGroup>
+
+## Compliance & Monitoring
+
+### Automated Monitoring
+
+```mermaid
+graph LR
+  A[Listing] --> B{Monitor}
+  B --> C[Status Changes]
+  B --> D[Address Updates]
+  B --> E[Agent Changes]
+  C --> F[Notification]
+  D --> F
+  E --> F
+  F --> G[Webhook]
+  F --> H[Email]
+  F --> I[Dashboard]
+```
+
+### Compliance Checks
+
+<CardGroup cols={2}>
+  <Card title="Registration Status" icon="file-certificate">
+    - Active status
+    - Good standing
+    - Filing compliance
+    - Annual reports
+  </Card>
+  
+  <Card title="Agent Status" icon="user">
+    - Current appointment
+    - Address validity
+    - Service status
+    - Change history
+  </Card>
+  
+  <Card title="Document Status" icon="file">
+    - Required filings
+    - Expiration dates
+    - Renewal deadlines
+    - Missing documents
+  </Card>
+  
+  <Card title="Address Status" icon="map-pin">
+    - Address validation
+    - Mail deliverability
+    - Change verification
+    - Jurisdiction compliance
+  </Card>
+</CardGroup>
+
+## SDK Support
+
+### Available SDKs
+
+<CardGroup cols={3}>
+  <Card title="Node.js" icon="node-js">
+    ```bash
+    npm install @palm/sdk
+    ```
+  </Card>
+  
+  <Card title="Python" icon="python">
+    ```bash
+    pip install palm-api
+    ```
+  </Card>
+  
+  <Card title="Ruby" icon="gem">
+    ```bash
+    gem install palm-api
+    ```
+  </Card>
+</CardGroup>
+
+### SDK Features
+
+- Type definitions included
+- Automatic retry handling
+- Rate limit management
+- Webhook verification
+- Response parsing
+- Error handling
+- Logging options
+- Metrics tracking
+
+## Testing & Development
+
+### Sandbox Environment
+
+```typescript
+const palm = new PalmAPI({
+  apiKey: 'YOUR_TEST_API_KEY',
+  environment: 'sandbox'
+});
+```
+
+### Test Data Generation
+
+<CodeGroup>
+```bash
+# Generate Test Data
+curl -X POST "https://api.sandbox.palm.com/v1/test/generate" \
+  -H "Authorization: Bearer YOUR_TEST_API_KEY" \
+  -d '{
+    "type": "business_listing",
+    "count": 10,
+    "jurisdiction": "CA",
+    "industry": "technology"
+  }'
+```
+
+```typescript
+// TypeScript
+const testData = await palm.test.generate({
+  type: 'business_listing',
+  count: 10,
+  jurisdiction: 'CA',
+  industry: 'technology'
+});
+```
+</CodeGroup>
+
+## Support & Troubleshooting
+
+<CardGroup cols={2}>
+  <Card title="Documentation" icon="book">
+    - API Reference
+    - Integration guides
+    - Best practices
+    - Examples
+  </Card>
+  
+  <Card title="Support Channels" icon="headset">
+    - Email support
+    - Community forum
+    - Office hours
+    - Priority support
+  </Card>
+  
+  <Card title="Tools" icon="wrench">
+    - Status page
+    - API playground
+    - Debugging tools
+    - Test suite
+  </Card>
+  
+  <Card title="Resources" icon="folder">
+    - Sample code
+    - Use cases
+    - Case studies
+    - Tutorials
+  </Card>
+</CardGroup>
+```
+
+---
+
