@@ -1,194 +1,145 @@
 ---
-title: 'Create Profile'
-description: 'Create a new business profile'
-api: 'POST /v1/profiles'
+title: 'Stakeholder Management'
+description: 'Manage business stakeholders and ownership'
 ---
 
-Create a new business profile in Palm. This endpoint initiates the profile creation process and returns a profile object.
+import { Card, CardGroup } from '@/components/card'
 
-### Request Body
+# Stakeholder Management
 
-<ParamField body="name" type="string" required>
-  The legal name of the business entity
-</ParamField>
+The Stakeholders API allows you to manage individuals and entities that have ownership or control over a business profile.
 
-<ParamField body="entityType" type="string" required>
-  The type of business entity. One of: `corporation`, `llc`, `partnership`, `sole_proprietorship`
-</ParamField>
-
-<ParamField body="entityIdNumber" type="string">
-  State registration number or filing number
-</ParamField>
-
-<ParamField body="jurisdiction" type="string" required>
-  State or jurisdiction where the entity is registered (e.g., 'CA', 'DE')
-</ParamField>
-
-<ParamField body="businessType" type="string">
-  Primary business activity or industry
-</ParamField>
-
-<ParamField body="registrationDetails" type="object">
-  <Expandable title="properties">
-    <ParamField body="formationDate" type="string">
-      Date of entity formation (YYYY-MM-DD)
-    </ParamField>
-    <ParamField body="status" type="string">
-      Current registration status
-    </ParamField>
-  </Expandable>
-</ParamField>
-
-### Request Examples
-
-<CodeGroup>
-```bash cURL
-curl -X POST "https://api.palm.com/v1/profiles" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Acme Corporation",
-    "entityType": "corporation",
-    "entityIdNumber": "C1234567",
-    "jurisdiction": "CA",
-    "businessType": "Technology",
-    "registrationDetails": {
-      "formationDate": "2020-01-15"
-    }
-  }'
-```
-
-```typescript Node
-import { Palm } from '@palm/node';
-
-const palm = new Palm('YOUR_API_KEY');
-
-const profile = await palm.profiles.create({
-  name: "Acme Corporation",
-  entityType: "corporation",
-  entityIdNumber: "C1234567",
-  jurisdiction: "CA",
-  businessType: "Technology",
-  registrationDetails: {
-    formationDate: "2020-01-15"
-  }
-});
-```
-
-```python Python
-from palm import Palm
-
-palm = Palm('YOUR_API_KEY')
-
-profile = palm.profiles.create(
-    name="Acme Corporation",
-    entity_type="corporation",
-    entity_id_number="C1234567",
-    jurisdiction="CA",
-    business_type="Technology",
-    registration_details={
-        "formation_date": "2020-01-15"
-    }
-)
-```
-</CodeGroup>
-
-### Response
-
-<ResponseField name="success" type="boolean">
-  Indicates if the request was successful
-</ResponseField>
-
-<ResponseField name="data" type="object">
-  <Expandable title="Profile object">
-    <ResponseField name="id" type="string">
-      Unique identifier for the profile
-    </ResponseField>
-    <ResponseField name="name" type="string">
-      Business name
-    </ResponseField>
-    <ResponseField name="entityType" type="string">
-      Type of business entity
-    </ResponseField>
-    <ResponseField name="status" type="string">
-      Current profile status
-    </ResponseField>
-    <ResponseField name="compliance" type="object">
-      Current compliance status
-    </ResponseField>
-    <ResponseField name="metadata" type="object">
-      Additional profile metadata
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-### Response Example
+## The Stakeholder Object
 
 ```json
 {
-  "success": true,
-  "data": {
-    "id": "prof_123abc",
-    "name": "Acme Corporation",
-    "entityType": "corporation",
-    "entityIdNumber": "C1234567",
-    "jurisdiction": "CA",
-    "businessType": "Technology",
-    "status": "pending",
-    "registrationDetails": {
-      "formationDate": "2020-01-15",
-      "status": "active"
-    },
-    "compliance": {
-      "status": "pending",
-      "requiredDocuments": [
-        {
-          "type": "FORMATION",
-          "status": "REQUIRED"
-        }
-      ]
-    },
-    "metadata": {
-      "createdAt": "2024-01-30T12:00:00Z",
-      "createdBy": "api"
-    }
+  "id": "stake_123abc",
+  "type": "individual",
+  "role": {
+    "title": "CEO",
+    "type": "officer"
+  },
+  "personalInfo": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@acme.com"
+  },
+  "ownership": {
+    "percentage": 51.5,
+    "type": "direct",
+    "isBeneficialOwner": true
+  },
+  "verification": {
+    "status": "verified",
+    "verifiedAt": "2024-01-15T12:00:00Z"
   }
 }
 ```
 
-### Error Handling
+## Available Operations
 
-<CodeGroup>
-```json 400 Bad Request
-{
-  "success": false,
-  "error": {
-    "code": "INVALID_ENTITY_TYPE",
-    "message": "Invalid entity type provided",
-    "details": {
-      "allowedTypes": ["corporation", "llc", "partnership", "sole_proprietorship"]
-    }
-  }
+<CardGroup cols={2}>
+  <Card title="Add Stakeholder" icon="plus" href="/api-reference/stakeholders/create">
+    Add a new stakeholder to a profile
+  </Card>
+  <Card title="Get Stakeholder" icon="eye" href="/api-reference/stakeholders/retrieve">
+    Retrieve stakeholder details
+  </Card>
+  <Card title="Update Stakeholder" icon="pen" href="/api-reference/stakeholders/update">
+    Update stakeholder information
+  </Card>
+  <Card title="List Stakeholders" icon="list" href="/api-reference/stakeholders/list">
+    List all stakeholders for a profile
+  </Card>
+</CardGroup>
+
+## Stakeholder Types
+
+Palm supports different types of stakeholders:
+
+### Individual Stakeholders
+- Natural persons
+- Officers and directors
+- Beneficial owners
+
+### Entity Stakeholders
+- Corporate owners
+- Trust entities
+- Partnerships
+
+## Ownership Types
+
+<CardGroup cols={2}>
+  <Card title="Direct Ownership" icon="arrow-right">
+    Stakeholder directly owns shares or membership interest
+  </Card>
+  <Card title="Indirect Ownership" icon="arrows-split">
+    Ownership through intermediate entities
+  </Card>
+</CardGroup>
+
+## Verification Status
+
+Stakeholders can have the following verification statuses:
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Awaiting verification |
+| `verified` | Information verified |
+| `rejected` | Verification failed |
+| `expired` | Verification needs renewal |
+
+## Required Documents
+
+Different stakeholder types require different verification documents:
+
+### Individual Stakeholders
+- Government ID
+- Proof of address
+- Tax ID documentation
+
+### Entity Stakeholders
+- Formation documents
+- Corporate resolutions
+- Operating agreements
+
+## Ownership Calculations
+
+Palm automatically calculates total ownership percentages:
+
+```typescript
+interface OwnershipCalculation {
+  direct: number;          // Direct ownership percentage
+  indirect: number;        // Indirect ownership through other entities
+  total: number;          // Combined ownership percentage
+  isBeneficialOwner: boolean; // Whether total ownership exceeds 25%
 }
 ```
 
-```json 409 Conflict
-{
-  "success": false,
-  "error": {
-    "code": "DUPLICATE_ENTITY",
-    "message": "A profile with this entity ID already exists",
-    "details": {
-      "entityIdNumber": "C1234567",
-      "existingProfileId": "prof_456def"
-    }
-  }
-}
-```
-</CodeGroup>
+## Best Practices
 
-### Next Steps
+<CardGroup cols={2}>
+  <Card title="Regular Updates" icon="rotate">
+    Keep stakeholder information current
+  </Card>
+  <Card title="Document Verification" icon="shield-check">
+    Always verify ownership documents
+  </Card>
+  <Card title="Clear Roles" icon="users">
+    Define stakeholder roles clearly
+  </Card>
+  <Card title="Track Changes" icon="history">
+    Monitor ownership changes
+  </Card>
+</CardGroup>
 
-<Card title="Add Stakeholders" icon="users" href="/api-reference/stakeholders/create">
-  After creating a profile, you can add stakeholders to track ownership and relationships.
-</Card>
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Business Verification" icon="building" href="/guides/business-verification">
+    Learn about entity verification
+  </Card>
+  <Card title="Compliance Guide" icon="shield" href="/guides/compliance-tracking">
+    Understand compliance requirements
+  </Card>
+</CardGroup>
