@@ -1,0 +1,171 @@
+---
+title: 'Compliance Management'
+description: 'Track and manage business compliance requirements'
+---
+
+import { Card, CardGroup } from '@/components/card'
+
+# Compliance Management
+
+The Compliance API helps you track and manage regulatory compliance requirements for business entities, including BOI filings, SOI, and other state requirements.
+
+## The Compliance Object
+
+```json
+{
+  "id": "comp_123abc",
+  "profileId": "prof_789xyz",
+  "status": "compliant",
+  "requirements": {
+    "boi": {
+      "status": "filed",
+      "filedDate": "2024-01-15",
+      "nextDueDate": null,
+      "filingId": "fil_456def"
+    },
+    "soi": {
+      "status": "due",
+      "lastFiled": "2023-01-15",
+      "nextDueDate": "2024-01-15"
+    }
+  },
+  "documents": [
+    {
+      "id": "doc_123",
+      "type": "BOI_FILING",
+      "status": "verified"
+    }
+  ]
+}
+```
+
+## Compliance Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Status" icon="shield-check" href="/api-reference/compliance/status">
+    Check current compliance status
+  </Card>
+  <Card title="Update Status" icon="pen" href="/api-reference/compliance/update">
+    Update compliance information
+  </Card>
+  <Card title="File Documents" icon="file-arrow-up" href="/api-reference/compliance/file">
+    Submit compliance filings
+  </Card>
+  <Card title="History" icon="clock" href="/api-reference/compliance/history">
+    View compliance history
+  </Card>
+</CardGroup>
+
+## Compliance Types
+
+### BOI (Beneficial Ownership Information)
+```json
+{
+  "status": "filed",
+  "requirements": {
+    "filingFrequency": "one_time",
+    "exemptions": ["bank", "credit_union"],
+    "deadlines": {
+      "initial": "30_days_after_formation",
+      "updates": "30_days_after_change"
+    }
+  }
+}
+```
+
+### SOI (Statement of Information)
+```json
+{
+  "status": "due",
+  "requirements": {
+    "filingFrequency": "annual",
+    "jurisdiction": "CA",
+    "fee": 2500,
+    "deadlines": {
+      "initial": "90_days_after_formation",
+      "periodic": "filing_month"
+    }
+  }
+}
+```
+
+## Status Codes
+
+| Status | Description |
+|--------|-------------|
+| `compliant` | All requirements met |
+| `due` | Filing required |
+| `overdue` | Past filing deadline |
+| `exempt` | Not required to file |
+| `pending` | Filing in progress |
+
+## Example Operations
+
+### Check Compliance Status
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.palm.com/v1/profiles/{profileId}/compliance" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+const status = await palm.compliance.get(profileId);
+```
+
+```python Python
+status = palm.compliance.get(profile_id)
+```
+</CodeGroup>
+
+### Update Compliance Status
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH "https://api.palm.com/v1/profiles/{profileId}/compliance" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "boi": {
+      "status": "filed",
+      "filingDate": "2024-01-15"
+    }
+  }'
+```
+
+```typescript Node
+await palm.compliance.update(profileId, {
+  boi: {
+    status: "filed",
+    filingDate: "2024-01-15"
+  }
+});
+```
+</CodeGroup>
+
+## Webhook Events
+
+Subscribe to compliance-related events:
+
+```json
+{
+  "type": "compliance.status.changed",
+  "data": {
+    "profileId": "prof_123",
+    "complianceType": "boi",
+    "oldStatus": "due",
+    "newStatus": "filed",
+    "timestamp": "2024-01-15T12:00:00Z"
+  }
+}
+```
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card title="Business Verification" icon="building" href="/guides/business-verification">
+    Learn about verification requirements
+  </Card>
+  <Card title="Document Management" icon="file" href="/api-reference/documents/overview">
+    Handle compliance documents
+  </Card>
+</CardGroup>
