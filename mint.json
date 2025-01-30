@@ -1,8 +1,8 @@
 {
   "name": "Palm API",
   "logo": {
-    "light": "/logo/palm-logo-light.png",
-    "dark": "/logo/palm-logo-dark.png"
+    "light": "https://userimg-assets.customeriomail.com/images/client-env-146826/1706535409485_flogo_jan_29_2024_01HNAPZND5BXGK7SSP6QMDE384.png",
+    "dark": "https://userimg-assets.customeriomail.com/images/client-env-146826/1711786377340_logo56_01HT76PJ8B05CWK4FZKVK64K0H.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
