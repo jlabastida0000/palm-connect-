@@ -1,0 +1,183 @@
+---
+title: 'Document Management'
+description: 'Upload, manage, and verify business documents'
+---
+
+import { Card, CardGroup } from '@/components/card'
+
+# Document Management
+
+The Documents API allows you to manage all documents related to business profiles, stakeholders, and compliance requirements.
+
+## The Document Object
+
+```json
+{
+  "id": "doc_123abc",
+  "profileId": "prof_789xyz",
+  "type": "FORMATION",
+  "category": "COMPLIANCE",
+  "status": "VERIFIED",
+  "metadata": {
+    "fileName": "articles_of_incorporation.pdf",
+    "fileSize": 1024567,
+    "mimeType": "application/pdf",
+    "uploadedAt": "2024-01-15T12:00:00Z",
+    "verifiedAt": "2024-01-15T12:05:00Z"
+  }
+}
+```
+
+## Available Operations
+
+<CardGroup cols={2}>
+  <Card title="Upload Document" icon="upload" href="/api-reference/documents/upload">
+    Upload a new document
+  </Card>
+  <Card title="Get Document" icon="file" href="/api-reference/documents/retrieve">
+    Retrieve document details
+  </Card>
+  <Card title="List Documents" icon="files" href="/api-reference/documents/list">
+    List all documents
+  </Card>
+  <Card title="Delete Document" icon="trash" href="/api-reference/documents/delete">
+    Remove a document
+  </Card>
+</CardGroup>
+
+## Document Types
+
+### Formation Documents
+- Articles of Incorporation
+- Operating Agreements
+- Partnership Agreements
+- Business Licenses
+
+### Compliance Documents
+- BOI Filings
+- Annual Reports
+- Tax Documents
+- Regulatory Filings
+
+### Verification Documents
+- Government IDs
+- Proof of Address
+- Professional Licenses
+- Certifications
+
+## Upload a Document
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/profiles/{profileId}/documents" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -F "type=FORMATION" \
+  -F "file=@/path/to/document.pdf"
+```
+
+```typescript Node
+const doc = await palm.documents.upload(profileId, {
+  type: "FORMATION",
+  file: fs.createReadStream("./document.pdf")
+});
+```
+
+```python Python
+with open("document.pdf", "rb") as f:
+    doc = palm.documents.upload(
+        profile_id,
+        type="FORMATION",
+        file=f
+    )
+```
+</CodeGroup>
+
+## Document Categories
+
+| Category | Description | Required Fields |
+|----------|-------------|-----------------|
+| `FORMATION` | Entity formation documents | `jurisdiction`, `entityType` |
+| `COMPLIANCE` | Regulatory filings | `filingType`, `period` |
+| `IDENTIFICATION` | Identity verification | `documentType`, `issuingCountry` |
+| `FINANCIAL` | Financial records | `documentType`, `period` |
+
+## Document Status
+
+| Status | Description |
+|--------|-------------|
+| `PENDING` | Recently uploaded, awaiting review |
+| `VERIFIED` | Document verified and accepted |
+| `REJECTED` | Document rejected during review |
+| `EXPIRED` | Document no longer valid |
+
+## Security Features
+
+<CardGroup cols={2}>
+  <Card title="Encryption" icon="lock">
+    All documents are encrypted at rest
+  </Card>
+  <Card title="Access Control" icon="shield">
+    Granular permission controls
+  </Card>
+  <Card title="Audit Logs" icon="list-check">
+    Track all document actions
+  </Card>
+  <Card title="Expiry Tracking" icon="calendar">
+    Monitor document validity
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+### File Requirements
+- Maximum file size: 25MB
+- Supported formats: PDF, PNG, JPG
+- Minimum resolution: 300 DPI
+- Color preferred over grayscale
+
+### Document Quality
+- Ensure documents are clear and legible
+- Include all pages
+- Remove password protection
+- Verify file is not corrupted
+
+## Error Handling
+
+<CodeGroup>
+```json 413 File Too Large
+{
+  "error": {
+    "code": "FILE_TOO_LARGE",
+    "message": "File exceeds maximum size of 25MB",
+    "details": {
+      "maxSize": 26214400,
+      "actualSize": 31457280
+    }
+  }
+}
+```
+
+```json 415 Unsupported Format
+{
+  "error": {
+    "code": "INVALID_FILE_TYPE",
+    "message": "Unsupported file format",
+    "details": {
+      "supportedFormats": ["pdf", "png", "jpg"],
+      "providedFormat": "doc"
+    }
+  }
+}
+```
+</CodeGroup>
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Business Verification" icon="building" href="/guides/business-verification">
+    Learn about document requirements
+  </Card>
+  <Card title="Compliance Guide" icon="shield" href="/guides/compliance-tracking">
+    Understand compliance documents
+  </Card>
+</CardGroup>
