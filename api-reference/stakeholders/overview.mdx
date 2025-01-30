@@ -1,0 +1,194 @@
+---
+title: 'Create Profile'
+description: 'Create a new business profile'
+api: 'POST /v1/profiles'
+---
+
+Create a new business profile in Palm. This endpoint initiates the profile creation process and returns a profile object.
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  The legal name of the business entity
+</ParamField>
+
+<ParamField body="entityType" type="string" required>
+  The type of business entity. One of: `corporation`, `llc`, `partnership`, `sole_proprietorship`
+</ParamField>
+
+<ParamField body="entityIdNumber" type="string">
+  State registration number or filing number
+</ParamField>
+
+<ParamField body="jurisdiction" type="string" required>
+  State or jurisdiction where the entity is registered (e.g., 'CA', 'DE')
+</ParamField>
+
+<ParamField body="businessType" type="string">
+  Primary business activity or industry
+</ParamField>
+
+<ParamField body="registrationDetails" type="object">
+  <Expandable title="properties">
+    <ParamField body="formationDate" type="string">
+      Date of entity formation (YYYY-MM-DD)
+    </ParamField>
+    <ParamField body="status" type="string">
+      Current registration status
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/profiles" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Acme Corporation",
+    "entityType": "corporation",
+    "entityIdNumber": "C1234567",
+    "jurisdiction": "CA",
+    "businessType": "Technology",
+    "registrationDetails": {
+      "formationDate": "2020-01-15"
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const profile = await palm.profiles.create({
+  name: "Acme Corporation",
+  entityType: "corporation",
+  entityIdNumber: "C1234567",
+  jurisdiction: "CA",
+  businessType: "Technology",
+  registrationDetails: {
+    formationDate: "2020-01-15"
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+profile = palm.profiles.create(
+    name="Acme Corporation",
+    entity_type="corporation",
+    entity_id_number="C1234567",
+    jurisdiction="CA",
+    business_type="Technology",
+    registration_details={
+        "formation_date": "2020-01-15"
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Profile object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the profile
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Business name
+    </ResponseField>
+    <ResponseField name="entityType" type="string">
+      Type of business entity
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current profile status
+    </ResponseField>
+    <ResponseField name="compliance" type="object">
+      Current compliance status
+    </ResponseField>
+    <ResponseField name="metadata" type="object">
+      Additional profile metadata
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "prof_123abc",
+    "name": "Acme Corporation",
+    "entityType": "corporation",
+    "entityIdNumber": "C1234567",
+    "jurisdiction": "CA",
+    "businessType": "Technology",
+    "status": "pending",
+    "registrationDetails": {
+      "formationDate": "2020-01-15",
+      "status": "active"
+    },
+    "compliance": {
+      "status": "pending",
+      "requiredDocuments": [
+        {
+          "type": "FORMATION",
+          "status": "REQUIRED"
+        }
+      ]
+    },
+    "metadata": {
+      "createdAt": "2024-01-30T12:00:00Z",
+      "createdBy": "api"
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_ENTITY_TYPE",
+    "message": "Invalid entity type provided",
+    "details": {
+      "allowedTypes": ["corporation", "llc", "partnership", "sole_proprietorship"]
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "DUPLICATE_ENTITY",
+    "message": "A profile with this entity ID already exists",
+    "details": {
+      "entityIdNumber": "C1234567",
+      "existingProfileId": "prof_456def"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Add Stakeholders" icon="users" href="/api-reference/stakeholders/create">
+  After creating a profile, you can add stakeholders to track ownership and relationships.
+</Card>
