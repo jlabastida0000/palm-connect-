@@ -1,0 +1,161 @@
+---
+title: 'List Profiles'
+description: 'Search and filter business profiles'
+api: 'GET /v1/profiles'
+---
+
+# List Profiles
+
+Search and filter business profiles with support for pagination and advanced filtering.
+
+## Query Parameters
+
+<ParamField query="jurisdiction" type="string">
+  Filter by jurisdiction (e.g., 'CA', 'DE')
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by profile status. Options: `active`, `inactive`, `pending`, `suspended`
+</ParamField>
+
+<ParamField query="entityType" type="string">
+  Filter by entity type. Options: `corporation`, `llc`, `partnership`, `sole_proprietorship`
+</ParamField>
+
+<ParamField query="query" type="string">
+  Search text matching names or entity IDs
+</ParamField>
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField query="limit" type="integer" default="10">
+  Number of results per page (max 100)
+</ParamField>
+
+## Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.palm.com/v1/profiles?jurisdiction=CA&status=active&limit=10" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+const profiles = await palm.profiles.list({
+  jurisdiction: 'CA',
+  status: 'active',
+  limit: 10
+});
+```
+
+```python Python
+profiles = palm.profiles.list(
+    jurisdiction='CA',
+    status='active',
+    limit=10
+)
+```
+</CodeGroup>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of profile objects
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  <Expandable title="properties">
+    <ResponseField name="total" type="integer">
+      Total number of matching profiles
+    </ResponseField>
+    <ResponseField name="page" type="integer">
+      Current page number
+    </ResponseField>
+    <ResponseField name="limit" type="integer">
+      Results per page
+    </ResponseField>
+    <ResponseField name="hasMore" type="boolean">
+      Whether there are more pages
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Response Example
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "prof_123abc",
+      "name": "Acme Corporation",
+      "entityType": "corporation",
+      "entityIdNumber": "C1234567",
+      "jurisdiction": "CA",
+      "status": "active",
+      "registrationDetails": {
+        "formationDate": "2020-01-15"
+      },
+      "compliance": {
+        "status": "compliant"
+      }
+    }
+  ],
+  "pagination": {
+    "total": 45,
+    "page": 1,
+    "limit": 10,
+    "hasMore": true
+  }
+}
+```
+
+## Filtering Examples
+
+### Filter by Multiple Criteria
+```bash
+GET /v1/profiles?jurisdiction=CA&entityType=corporation&status=active
+```
+
+### Search by Name or ID
+```bash
+GET /v1/profiles?query=acme
+```
+
+### Complex Filtering
+```bash
+GET /v1/profiles?jurisdiction=CA,DE&entityType=corporation,llc&status=active
+```
+
+## Error Responses
+
+<CodeGroup>
+```json 400 Invalid Parameters
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_PARAMETERS",
+    "message": "Invalid query parameters",
+    "details": {
+      "status": "Invalid status value. Must be one of: active, inactive, pending, suspended"
+    }
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid API key provided"
+  }
+}
+```
+</CodeGroup>

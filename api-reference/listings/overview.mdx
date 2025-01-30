@@ -1,0 +1,196 @@
+---
+title: 'Business Listings'
+description: 'Search and manage business listings'
+---
+
+import { Card, CardGroup } from '@/components/card'
+
+# Business Listings
+
+The Listings API allows you to search business listings across multiple jurisdictions and claim them for your organization.
+
+## The Listing Object
+
+```json
+{
+  "id": "list_123abc",
+  "source": "SOS",
+  "entityId": "C1234567",
+  "name": "Acme Corporation",
+  "jurisdiction": "CA",
+  "registrationDate": "2020-01-15",
+  "status": "ACTIVE",
+  "matchConfidence": 0.95,
+  "claimStatus": "UNCLAIMED",
+  "registeredAgent": {
+    "name": "John Doe",
+    "address": {
+      "line1": "123 Main St",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94105"
+    }
+  }
+}
+```
+
+## Available Operations
+
+<CardGroup cols={2}>
+  <Card title="Search Listings" icon="search" href="/api-reference/listings/search">
+    Search business records
+  </Card>
+  <Card title="Get Listing" icon="eye" href="/api-reference/listings/retrieve">
+    Get listing details
+  </Card>
+  <Card title="Claim Listing" icon="flag" href="/api-reference/listings/claim">
+    Claim a business listing
+  </Card>
+  <Card title="Get Claim Status" icon="check" href="/api-reference/listings/claim-status">
+    Check claim status
+  </Card>
+</CardGroup>
+
+## Search Listings
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.palm.com/v1/listings/search?query=acme&jurisdiction=CA" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+const listings = await palm.listings.search({
+  query: 'acme',
+  jurisdiction: 'CA'
+});
+```
+</CodeGroup>
+
+## Search Parameters
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `query` | Business name or ID | `acme` |
+| `jurisdiction` | State code | `CA` |
+| `status` | Registration status | `active` |
+| `entityType` | Type of entity | `corporation` |
+| `page` | Page number | `1` |
+| `limit` | Results per page | `10` |
+
+## Claim a Listing
+
+```bash
+curl -X POST "https://api.palm.com/v1/listings/{listingId}/claim" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "verificationMethod": "DOCUMENT",
+    "documents": [
+      {
+        "type": "FORMATION",
+        "file": "base64_encoded_file"
+      }
+    ]
+  }'
+```
+
+## Verification Methods
+
+<CardGroup cols={2}>
+  <Card title="Document Upload" icon="file-upload">
+    Submit formation documents
+  </Card>
+  <Card title="Agent Verification" icon="user-check">
+    Verify through registered agent
+  </Card>
+  <Card title="EIN Match" icon="hashtag">
+    Match tax ID number
+  </Card>
+  <Card title="Manual Review" icon="eye">
+    Submit for manual verification
+  </Card>
+</CardGroup>
+
+## Claim Status
+
+| Status | Description |
+|--------|-------------|
+| `UNCLAIMED` | No active claims |
+| `PENDING` | Claim under review |
+| `VERIFIED` | Claim approved |
+| `REJECTED` | Claim rejected |
+| `DISPUTED` | Claim disputed |
+
+## Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "claim": {
+      "id": "claim_123abc",
+      "listingId": "list_789xyz",
+      "status": "PENDING",
+      "verificationMethod": "DOCUMENT",
+      "submittedAt": "2024-01-30T12:00:00Z",
+      "documents": [
+        {
+          "id": "doc_456def",
+          "type": "FORMATION",
+          "status": "PENDING"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Error Handling
+
+<CodeGroup>
+```json 400 Invalid Claim
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CLAIM",
+    "message": "Cannot claim inactive business",
+    "details": {
+      "listingId": "list_123abc",
+      "status": "INACTIVE"
+    }
+  }
+}
+```
+
+```json 409 Existing Claim
+{
+  "success": false,
+  "error": {
+    "code": "EXISTING_CLAIM",
+    "message": "Listing already has an active claim",
+    "details": {
+      "listingId": "list_123abc",
+      "existingClaimId": "claim_456def"
+    }
+  }
+}
+```
+</CodeGroup>
+
+## Best Practices
+
+1. **Search First**: Always search for existing listings before creating new profiles
+2. **Verify Information**: Cross-check listing details with official records
+3. **Document Ready**: Have verification documents prepared before claiming
+4. **Monitor Status**: Set up webhooks to track claim status changes
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Business Verification" icon="shield-check" href="/guides/business-verification">
+    Learn about verification requirements
+  </Card>
+  <Card title="Document Management" icon="file" href="/api-reference/documents/overview">
+    Handle verification documents
+  </Card>
+</CardGroup>
