@@ -1,14 +1,21 @@
 {
   "name": "Palm API",
   "logo": {
-    "light": "/logo/light.png",
-    "dark": "/logo/dark.png"
+    "light": "/images/palm-logo-light.png",
+    "dark": "/images/palm-logo-dark.png"
   },
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#7BEA4D",
     "light": "#55D799",
-    "dark": "#1F3B33"
+    "dark": "#1F3B33",
+    "background": {
+      "dark": "#1F3B33"
+    },
+    "anchors": {
+      "from": "#7BEA4D",
+      "to": "#55D799"
+    }
   },
   "topbarLinks": [
     {
@@ -45,12 +52,52 @@
     {
       "group": "API Reference",
       "pages": [
-        "api-reference/authentication",
-        "api-reference/profiles",
-        "api-reference/businesses",
-        "api-reference/stakeholders",
-        "api-reference/compliance",
-        "api-reference/documents",
+        {
+          "group": "Authentication",
+          "pages": [
+            "api-reference/authentication/overview",
+            "api-reference/authentication/api-keys",
+            "api-reference/authentication/oauth"
+          ]
+        },
+        {
+          "group": "Profiles",
+          "pages": [
+            "api-reference/profiles/overview",
+            "api-reference/profiles/create",
+            "api-reference/profiles/retrieve",
+            "api-reference/profiles/update",
+            "api-reference/profiles/list"
+          ]
+        },
+        {
+          "group": "Stakeholders",
+          "pages": [
+            "api-reference/stakeholders/overview",
+            "api-reference/stakeholders/create",
+            "api-reference/stakeholders/retrieve",
+            "api-reference/stakeholders/update",
+            "api-reference/stakeholders/list"
+          ]
+        },
+        {
+          "group": "Compliance",
+          "pages": [
+            "api-reference/compliance/overview",
+            "api-reference/compliance/status",
+            "api-reference/compliance/update",
+            "api-reference/compliance/history"
+          ]
+        },
+        {
+          "group": "Documents",
+          "pages": [
+            "api-reference/documents/overview",
+            "api-reference/documents/upload",
+            "api-reference/documents/retrieve",
+            "api-reference/documents/list"
+          ]
+        },
         "api-reference/core-data-models"
       ]
     },
@@ -61,21 +108,41 @@
         "guides/compliance-tracking",
         "guides/webhook-integration"
       ]
+    },
+    {
+      "group": "SDKs & Tools",
+      "pages": [
+        "sdks/node",
+        "sdks/python",
+        "sdks/postman"
+      ]
     }
   ],
-  "openapi": "./openapi.yaml",
+  "openapi": "./openapi/openapi.mdx",
   "api": {
     "baseUrl": "https://api.getpalm.com/v1",
     "playground": {
       "mode": "simple"
     },
     "auth": {
-      "method": "bearer"
+      "method": "bearer",
+      "name": "Authorization",
+      "inputPrefix": "Bearer "
     }
   },
   "footerSocials": {
     "github": "https://github.com/palm",
     "discord": "https://discord.gg/palm",
     "twitter": "https://twitter.com/palm"
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true
+  },
+  "search": {
+    "prompt": "Search Palm API docs..."
+  },
+  "modeToggle": {
+    "default": "dark"
   }
 }

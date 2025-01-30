@@ -3,18 +3,84 @@ title: 'Palm API Documentation'
 description: 'Build powerful entity management solutions with Palm'
 ---
 
+import { Card, CardGroup } from '@/components/card'
+
+# Palm Partner API
+
 Welcome to the Palm API documentation. This API enables you to manage business profiles, track compliance, handle stakeholder information, and more.
-
-## Key Features
-
-- Profile Management
-- Compliance Tracking
-- Stakeholder Management
-- Business Listing Search & Claim
-- Document Management
-- Real-time Webhooks
 
 ## Base URL
 
 ```bash
 https://api.palm.io/v1
+```
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Profile Management" icon="building" href="/api-reference/profiles/overview">
+    Create and manage verified business profiles with complete ownership tracking
+  </Card>
+  <Card title="Compliance Tracking" icon="shield-check" href="/api-reference/compliance/overview">
+    Automated compliance monitoring for BOI, SOI, and more
+  </Card>
+  <Card title="Stakeholder Management" icon="users" href="/api-reference/stakeholders/overview">
+    Track beneficial owners and stakeholder relationships
+  </Card>
+  <Card title="Document Management" icon="file" href="/api-reference/documents/overview">
+    Secure document storage and verification
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+1. [Create an account](https://dashboard.palm.io/signup)
+2. [Get your API keys](https://dashboard.palm.io/settings/api)
+3. [Read the quickstart guide](/quickstart)
+4. [Explore the API reference](/api-reference/authentication/overview)
+
+## Integration Options
+
+### REST API
+```bash
+# Using API Key authentication
+curl -X GET "https://api.palm.com/v1/profiles" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### SDKs
+```bash
+# Node.js
+npm install @palm/node
+
+# Python
+pip install palm-api
+```
+
+### Webhooks
+```json
+{
+  "type": "profile.updated",
+  "data": {
+    "profileId": "prof_123abc",
+    "changes": ["compliance.status"]
+  }
+}
+```
+
+## Support & Resources
+
+<CardGroup cols={2}>
+  <Card title="Join Community" icon="slack" href="https://community.getpalm.com">
+    Get help from the Palm community
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/authentication/overview">
+    Explore detailed API documentation
+  </Card>
+  <Card title="SDKs & Tools" icon="wrench" href="/sdks/node">
+    Find libraries and tools
+  </Card>
+  <Card title="Status" icon="signal" href="https://status.getpalm.com">
+    View API status and uptime
+  </Card>
+</CardGroup>

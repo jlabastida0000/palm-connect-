@@ -1,0 +1,69 @@
+---
+title: 'Profile Management'
+description: 'Create and manage business profiles'
+---
+
+import { Card, CardGroup } from '@/components/card'
+
+## The Profile Object
+
+The Profile object represents a business entity in Palm. It contains basic information, compliance status, and relationships to stakeholders.
+
+```json
+{
+  "id": "prof_123abc",
+  "entityIdNumber": "C1234567",
+  "name": "Acme Corporation",
+  "entityType": "CORPORATION",
+  "status": "ACTIVE",
+  "compliance": {
+    "boi": {
+      "status": "FILED",
+      "filedDate": "2024-01-15"
+    }
+  }
+}
+```
+
+## Profile Operations
+
+<CardGroup cols={2}>
+  <Card title="Create Profile" icon="plus" href="/api-reference/profiles/create">
+    Create a new business profile
+  </Card>
+  <Card title="Retrieve Profile" icon="eye" href="/api-reference/profiles/retrieve">
+    Get profile details by ID
+  </Card>
+  <Card title="Update Profile" icon="pen" href="/api-reference/profiles/update">
+    Update an existing profile
+  </Card>
+  <Card title="List Profiles" icon="list" href="/api-reference/profiles/list">
+    Search and filter profiles
+  </Card>
+</CardGroup>
+
+## Profile States
+
+Profiles can be in various states throughout their lifecycle:
+
+- `ACTIVE` - Profile is verified and in good standing
+- `PENDING` - Profile is awaiting verification
+- `INACTIVE` - Profile is not currently active
+- `SUSPENDED` - Profile has been temporarily suspended
+
+## Related Resources
+
+<CardGroup cols={2}>
+  <Card title="Stakeholders" icon="users" href="/api-reference/stakeholders/overview">
+    Manage profile stakeholders and ownership
+  </Card>
+  <Card title="Compliance" icon="shield-check" href="/api-reference/compliance/overview">
+    Track compliance status and filings
+  </Card>
+  <Card title="Documents" icon="file" href="/api-reference/documents/overview">
+    Handle profile-related documents
+  </Card>
+  <Card title="Data Models" icon="code" href="/api-reference/core-data-models">
+    View profile data schemas
+  </Card>
+</CardGroup>
