@@ -1,9 +1,13 @@
----
 title: 'Profile Management'
-description: 'Create and manage business profiles'
+description: 'Create and manage business profiles and understand the Public Listings Architecture'
 ---
 
 import { Card, CardGroup } from '@/components/card'
+import { Mermaid } from '@/components/mermaid'  // Assuming Mermaid component exists
+
+## Overview
+
+The **Profile Management** system allows users to create, manage, and maintain business profiles within the Palm platform. Additionally, it leverages the **Public Listings API** to provide access to a comprehensive database of business entities aggregated from authoritative government sources. This integration ensures that business profiles are accurate, up-to-date, and compliant with relevant regulations.
 
 ## The Profile Object
 
@@ -67,3 +71,224 @@ Profiles can be in various states throughout their lifecycle:
     View profile data schemas
   </Card>
 </CardGroup>
+
+## Architecture Overview
+
+Understanding the underlying architecture is crucial for effectively managing profiles and leveraging public listings. The system is divided into several layers to ensure data integrity, scalability, and security.
+
+<Mermaid>
+flowchart TB
+    subgraph DataIngestion["Data Ingestion Layer"]
+        A[State Website Scrapers] --> B[Validation Queue]
+        B --> C[Raw Data Repository]
+    end
+
+    subgraph TransformationLayer["Transformation Layer"]
+        D[Normalization] --> E[Data Enrichment]
+        E --> F[Entity Matching]
+        F --> G[Deduplication]
+    end
+
+    subgraph Storage["Core Data Storage"]
+        H[(Business Listings DB)]
+        I[(Business Profiles DB)]
+    end
+
+    subgraph SearchLayer["Search Layer"]
+        J[Full-text Search Index]
+        K[Geospatial Index]
+    end
+
+    subgraph AccessLayer["Access Layer"]
+        L[Public API]
+        M[Private API]
+        N[Claim System]
+    end
+
+    C --> D
+    G --> H
+    H --> J
+    H --> K
+    H --> L
+    I --> M
+    N --> I
+
+    L --> |Read Only| Users[Public Users]
+    M --> |Authenticated| Business[Business Owners]
+    Users --> |Initiate Claim| N
+    N --> |Verification| Business
+</Mermaid>
+
+## Core Objects
+
+### Business Listing Object
+
+The `BusinessListing` object represents a consolidated view of publicly available business data:
+
+```typescript
+interface BusinessListing {
+  id: string;                    // Unique identifier
+  business_name: string;         // Legal business name
+  dba_names: string[];           // Doing Business As names
+  entity_type: string;           // Business structure type
+  formation_state: string;       // State of formation
+  formation_date: string;        // Date of formation
+  status: string;                // Current status
+  registered_address: Address;   // Primary address
+  mailing_address?: Address;     // Optional mailing address
+  entity_number: string;         // State registration number
+  jurisdiction: string;          // Registration jurisdiction
+  registered_agent?: {
+    name: string;
+    address: Address;
+  };
+  data_sources: DataSourceMetadata[];
+  industry_categories?: string[];
+  location_coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  website?: string;
+  social_profiles?: SocialProfile[];
+  last_verified: string;
+  confidence_score: number;
+  data_completeness: number;
+  is_claimed: boolean;
+  claim_status?: 'pending' | 'verified' | 'rejected';
+  has_profile?: boolean;
+}
+```
+
+### Supporting Types
+
+```typescript
+interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country?: string;
+}
+
+interface SocialProfile {
+  type: 'linkedin' | 'facebook' | 'twitter' | string;
+  url: string;
+}
+
+interface DataSourceMetadata {
+  source_name: string;
+  source_type: 'government' | 'commercial' | 'user-submitted';
+  last_updated: string;
+  confidence: number;
+}
+```
+
+## Key Features
+
+### Data Quality
+- **Normalization**: Data from various sources is standardized into a consistent format.
+- **Deduplication**: Advanced entity matching prevents duplicate listings.
+- **Enrichment**: Additional data points are added through various sources and APIs.
+- **Confidence Scoring**: Each listing includes a confidence score based on data quality and verification.
+
+### Search Capabilities
+- Full-text search across business names and other fields.
+- Geospatial queries for location-based searches.
+- Industry and category-based filtering.
+- Pagination and sorting options.
+
+### Access Control
+- Public endpoints are read-only and require no authentication.
+- Claim process allows business owners to verify ownership.
+- Verified owners can enhance their listings with additional information.
+
+## Available Endpoints
+
+### Public API
+- [Search Listings](/api-reference/listings/search) - Search and filter business listings.
+- [Retrieve Listing](/api-reference/listings/retrieve) - Get detailed information about a specific listing.
+- [Claim Listing](/api-reference/listings/claim) - Initiate the process of claiming a business listing.
+
+### Profile Management API
+- [Create Profile](/api-reference/profiles/create) - Create a new business profile.
+- [Retrieve Profile](/api-reference/profiles/retrieve) - Get profile details by ID.
+- [Update Profile](/api-reference/profiles/update) - Update an existing profile.
+- [List Profiles](/api-reference/profiles/list) - Search and filter profiles.
+
+## Rate Limits
+
+| Endpoint        | Rate Limit                |
+|-----------------|---------------------------|
+| Search          | 100 requests per minute   |
+| Retrieve        | 200 requests per minute   |
+| Claim           | 10 requests per minute    |
+| Create Profile  | 50 requests per minute    |
+| Update Profile  | 50 requests per minute    |
+
+## Error Handling
+
+The API uses conventional HTTP response codes:
+
+- `200` - Success
+- `400` - Bad request
+- `404` - Resource not found
+- `429` - Rate limit exceeded
+- `500` - Internal server error
+
+Errors include descriptive messages and unique error codes for troubleshooting.
+
+```json
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "You have exceeded the rate limit. Please try again later.",
+    "details": {
+      "reset_at": "2025-01-31T16:00:00Z",
+      "limit": 100,
+      "remaining": 0
+    }
+  }
+}
+```
+
+## Data Ingestion and Transformation
+
+To ensure the integrity and reliability of business profiles, the system employs a robust data ingestion and transformation pipeline.
+
+### Data Ingestion Layer
+- **State Website Scrapers**: Automated tools that collect data from various state websites.
+- **Validation Queue**: Ensures incoming data meets predefined quality standards.
+- **Raw Data Repository**: Stores unprocessed data for auditing and backup purposes.
+
+### Transformation Layer
+- **Normalization**: Standardizes data formats across different sources.
+- **Data Enrichment**: Enhances profiles with additional information from trusted APIs.
+- **Entity Matching**: Identifies and correlates data related to the same business entity.
+- **Deduplication**: Removes duplicate entries to maintain a clean dataset.
+
+### Core Data Storage
+- **Business Listings DB**: Central repository for all business listings.
+- **Business Profiles DB**: Stores detailed profiles associated with business listings.
+
+### Search Layer
+- **Full-text Search Index**: Enables efficient text-based searches.
+- **Geospatial Index**: Facilitates location-based queries.
+
+### Access Layer
+- **Public API**: Provides read-only access to public users.
+- **Private API**: Offers authenticated access for business owners and internal services.
+- **Claim System**: Allows business owners to claim and verify their profiles.
+
+## Claim Process
+
+The claim process is essential for business owners to assert ownership and manage their profiles effectively.
+
+1. **Initiate Claim**: Public users can initiate a claim for a business listing through the [Claim Listing API](/api-reference/listings/claim).
+2. **Verification**: The system verifies the ownership through provided documentation or automated checks.
+3. **Claim Status**: The claim can be in one of the following states:
+   - `pending` - Awaiting verification.
+   - `verified` - Successfully verified ownership.
+   - `rejected` - Verification failed.
+
+Once verified, business owners gain access to additional profile management features, allowing them to update and enrich their business information.
+
