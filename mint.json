@@ -1,86 +1,81 @@
 {
   "name": "Palm API",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0069ED",
-    "light": "#4D9CFF",
-    "dark": "#0046A3"
-  },
-  "api": {
-    "baseUrl": "https://api.palm.io/v1",
-    "auth": {
-      "method": "bearer"
-    }
+    "primary": "#7BEA4D",
+    "light": "#55D799",
+    "dark": "#1F3B33"
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "https://support.palm.io"
+      "url": "mailto:support@getpalm.com"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://app.palm.io"
+    "url": "https://dashboard.getpalm.com"
   },
   "anchors": [
     {
-      "name": "API Reference",
-      "icon": "code",
-      "url": "api-reference"
+      "name": "Community",
+      "icon": "slack",
+      "url": "https://community.getpalm.com"
     },
     {
-      "name": "Changelog",
-      "icon": "list",
-      "url": "changelog"
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://getpalm.com/blog"
     }
   ],
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "quickstart", "authentication"]
-    },
-    {
-      "group": "Profiles API",
       "pages": [
-        "api-reference/profiles/overview",
-        "api-reference/profiles/create",
-        "api-reference/profiles/get",
-        "api-reference/profiles/update",
-        "api-reference/profiles/delete"
+        "introduction",
+        "quickstart",
+        "core-concepts",
+        "glossary"
       ]
     },
     {
-      "group": "Listings API",
+      "group": "API Reference",
       "pages": [
-        "api-reference/listings/overview",
-        "api-reference/listings/search",
-        "api-reference/listings/claim"
+        "api-reference/authentication",
+        "api-reference/profiles",
+        "api-reference/businesses",
+        "api-reference/stakeholders",
+        "api-reference/compliance",
+        "api-reference/documents",
+        "api-reference/core-data-models"
       ]
     },
     {
-      "group": "Filings API",
+      "group": "Guides",
       "pages": [
-        "api-reference/filings/overview",
-        "api-reference/filings/create",
-        "api-reference/filings/submit",
-        "api-reference/filings/history"
-      ]
-    },
-    {
-      "group": "Webhooks API",
-      "pages": [
-        "api-reference/webhooks/overview",
-        "api-reference/webhooks/setup",
-        "api-reference/webhooks/events"
+        "guides/business-verification",
+        "guides/compliance-tracking",
+        "guides/webhook-integration"
       ]
     }
   ],
+  "openapi": "./openapi.yaml",
+  "api": {
+    "baseUrl": "https://api.getpalm.com/v1",
+    "playground": {
+      "mode": "simple"
+    },
+    "auth": {
+      "method": "bearer"
+    }
+  },
   "footerSocials": {
-    "github": "https://github.com/palm-api",
-    "discord": "https://discord.gg/palm"
+    "github": "https://github.com/palm",
+    "discord": "https://discord.gg/palm",
+    "twitter": "https://twitter.com/palm"
   }
 }
