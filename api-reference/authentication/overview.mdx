@@ -1,0 +1,114 @@
+---
+title: 'Authentication'
+description: 'Learn how to authenticate with the Palm API'
+---
+
+import { Card, CardGroup } from '@/components/card'
+
+# Authentication
+
+Palm API uses API keys and OAuth 2.0 for authentication. You can use either method depending on your integration needs.
+
+## API Keys
+
+For server-to-server integrations, use API keys. Each key looks like this:
+
+```bash
+# Test Environment
+pk_test_xxxxxxxxxxxxxxxxxxxx
+
+# Production Environment
+pk_live_xxxxxxxxxxxxxxxxxxxx
+```
+
+### Using API Keys
+
+Include your API key in the `Authorization` header:
+
+```bash
+curl -X GET "https://api.palm.com/v1/profiles" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+profiles = palm.profiles.list()
+```
+
+```typescript
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+const profiles = await palm.profiles.list();
+```
+
+## OAuth 2.0
+
+For user-based integrations, use OAuth 2.0. This allows users to grant your application access to their Palm data.
+
+### OAuth Flow
+
+1. **Authorization Request**
+```http
+GET https://api.palm.com/oauth/authorize
+  ?client_id=YOUR_CLIENT_ID
+  ?redirect_uri=YOUR_REDIRECT_URI
+  ?response_type=code
+  ?scope=profiles.read profiles.write
+```
+
+2. **Exchange Code for Token**
+```bash
+curl -X POST https://api.palm.com/oauth/token \
+  -d 'grant_type=authorization_code' \
+  -d 'code=AUTHORIZATION_CODE' \
+  -d 'client_id=YOUR_CLIENT_ID' \
+  -d 'client_secret=YOUR_CLIENT_SECRET'
+```
+
+3. **Use Access Token**
+```bash
+curl -X GET "https://api.palm.com/v1/profiles" \
+  -H "Authorization: Bearer ACCESS_TOKEN"
+```
+
+## Available Scopes
+
+| Scope | Description |
+|-------|-------------|
+| `profiles.read` | Read profile information |
+| `profiles.write` | Create and update profiles |
+| `compliance.read` | View compliance status |
+| `compliance.write` | Update compliance data |
+| `documents.read` | Access documents |
+| `documents.write` | Upload and manage documents |
+
+## Security Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Rotate Keys Regularly" icon="rotate">
+    Generate new API keys every 90 days
+  </Card>
+  <Card title="Use Environment Variables" icon="gear">
+    Never hardcode API keys in your code
+  </Card>
+  <Card title="Limit Permissions" icon="lock">
+    Use minimal required scopes for OAuth
+  </Card>
+  <Card title="Monitor Usage" icon="chart-line">
+    Track API key usage and set alerts
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Create a Profile" icon="plus" href="/api-reference/profiles/create">
+    Start managing business profiles
+  </Card>
+  <Card title="Set Up Webhooks" icon="webhook" href="/guides/webhook-integration">
+    Get real-time updates
+  </Card>
+</CardGroup>

@@ -1,0 +1,158 @@
+---
+title: 'Business Verification Guide'
+description: 'Learn how to verify business entities using the Palm API'
+---
+
+import { Card, CardGroup } from '@/components/card'
+import { Steps } from '@/components/steps'
+
+# Business Verification Guide
+
+Learn how to use Palm's API to verify business entities and ensure compliance with regulatory requirements.
+
+## Overview
+
+Business verification in Palm involves:
+1. Entity data validation
+2. Document verification
+3. Stakeholder verification
+4. Compliance checks
+
+## Implementation Steps
+
+<Steps>
+  ### Create a Profile
+  
+  First, create a profile with basic business information:
+  
+  ```bash
+  curl -X POST "https://api.palm.com/v1/profiles" \
+    -H "Authorization: Bearer YOUR_API_KEY" \
+    -d '{
+      "name": "Acme Corporation",
+      "entityIdNumber": "C1234567",
+      "jurisdiction": "CA"
+    }'
+  ```
+
+  ### Upload Verification Documents
+  
+  Upload required documents for verification:
+  
+  ```bash
+  curl -X POST "https://api.palm.com/v1/profiles/{profileId}/documents" \
+    -H "Authorization: Bearer YOUR_API_KEY" \
+    -F "type=FORMATION" \
+    -F "file=@articles_of_incorporation.pdf"
+  ```
+
+  ### Add Stakeholders
+  
+  Add stakeholders and their verification documents:
+  
+  ```bash
+  curl -X POST "https://api.palm.com/v1/profiles/{profileId}/stakeholders" \
+    -H "Authorization: Bearer YOUR_API_KEY" \
+    -d '{
+      "type": "individual",
+      "role": {
+        "title": "CEO",
+        "type": "officer"
+      },
+      "personalInfo": {
+        "firstName": "John",
+        "lastName": "Doe"
+      }
+    }'
+  ```
+
+  ### Monitor Verification Status
+  
+  Check verification status and handle updates:
+  
+  ```bash
+  curl -X GET "https://api.palm.com/v1/profiles/{profileId}/verification" \
+    -H "Authorization: Bearer YOUR_API_KEY"
+  ```
+</Steps>
+
+## Document Requirements
+
+Different entity types require different documents for verification:
+
+<CardGroup cols={2}>
+  <Card title="Corporation" icon="building">
+    - Articles of Incorporation
+    - EIN Documentation
+    - Officer List
+  </Card>
+  <Card title="LLC" icon="building-columns">
+    - Articles of Organization
+    - Operating Agreement
+    - Member List
+  </Card>
+  <Card title="Partnership" icon="handshake">
+    - Partnership Agreement
+    - Partner Information
+    - Registration Certificate
+  </Card>
+  <Card title="Sole Proprietorship" icon="user">
+    - Business License
+    - DBA Registration
+    - Owner ID
+  </Card>
+</CardGroup>
+
+## Verification Statuses
+
+| Status | Description |
+|--------|-------------|
+| `PENDING` | Verification in progress |
+| `VERIFIED` | All checks passed |
+| `REJECTED` | Verification failed |
+| `INCOMPLETE` | Missing required information |
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Pre-validate Data" icon="check">
+    Validate entity data before submission
+  </Card>
+  <Card title="Handle Updates" icon="rotate">
+    Listen for webhook updates
+  </Card>
+  <Card title="Document Quality" icon="image">
+    Ensure clear, legible documents
+  </Card>
+  <Card title="Track Changes" icon="history">
+    Monitor verification history
+  </Card>
+</CardGroup>
+
+## Error Handling
+
+Common verification errors and how to handle them:
+
+```json
+{
+  "error": {
+    "code": "VERIFICATION_FAILED",
+    "message": "Document verification failed",
+    "details": {
+      "reason": "DOCUMENT_ILLEGIBLE",
+      "documentType": "FORMATION"
+    }
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Compliance Guide" icon="shield-check" href="/guides/compliance-tracking">
+    Learn about ongoing compliance
+  </Card>
+  <Card title="Webhook Guide" icon="webhook" href="/guides/webhook-integration">
+    Set up real-time updates
+  </Card>
+</CardGroup>
