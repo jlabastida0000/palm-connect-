@@ -1,57 +1,79 @@
 ---
 title: 'Business Listings'
-description: 'Search and manage business listings'
+description: 'Search, retrieve, and manage business listings across multiple jurisdictions'
 ---
 
 import { Card, CardGroup } from '@/components/card'
 
 # Business Listings
 
-The Listings API allows you to search business listings across multiple jurisdictions and claim them for your organization.
-
-## The Listing Object
-
-```json
-{
-  "id": "list_123abc",
-  "source": "SOS",
-  "entityId": "C1234567",
-  "name": "Acme Corporation",
-  "jurisdiction": "CA",
-  "registrationDate": "2020-01-15",
-  "status": "ACTIVE",
-  "matchConfidence": 0.95,
-  "claimStatus": "UNCLAIMED",
-  "registeredAgent": {
-    "name": "John Doe",
-    "address": {
-      "line1": "123 Main St",
-      "city": "San Francisco",
-      "state": "CA",
-      "zip": "94105"
-    }
-  }
-}
-```
-
-## Available Operations
+The Public Listings API provides access to a comprehensive database of business entities aggregated from authoritative government sources. This system decouples public data aggregation from private business workflows, creating a robust and secure system for managing business information.
 
 <CardGroup cols={2}>
   <Card title="Search Listings" icon="search" href="/api-reference/listings/search">
-    Search business records
+    Search and filter business records
   </Card>
   <Card title="Get Listing" icon="eye" href="/api-reference/listings/retrieve">
-    Get listing details
+    Retrieve detailed listing information
   </Card>
   <Card title="Claim Listing" icon="flag" href="/api-reference/listings/claim">
-    Claim a business listing
+    Claim ownership of a business listing
   </Card>
   <Card title="Get Claim Status" icon="check" href="/api-reference/listings/claim-status">
-    Check claim status
+    Check status of a claim request
   </Card>
 </CardGroup>
 
-## Search Listings
+## System Architecture
+
+The listings system is built to handle large-scale data aggregation and real-time search capabilities.
+
+<Mermaid>
+flowchart TB
+    subgraph DataIngestion["Data Ingestion Layer"]
+        A[State Website Scrapers] --> B[Validation Queue]
+        B --> C[Raw Data Repository]
+    end
+
+    subgraph TransformationLayer["Transformation Layer"]
+        D[Normalization] --> E[Data Enrichment]
+        E --> F[Entity Matching]
+        F --> G[Deduplication]
+    end
+
+    subgraph Storage["Core Data Storage"]
+        H[(Business Listings DB)]
+        I[(Business Profiles DB)]
+    end
+
+    subgraph SearchLayer["Search Layer"]
+        J[Full-text Search Index]
+        K[Geospatial Index]
+    end
+
+    subgraph AccessLayer["Access Layer"]
+        L[Public API]
+        M[Private API]
+        N[Claim System]
+    end
+
+    C --> D
+    G --> H
+    H --> J
+    H --> K
+    H --> L
+    I --> M
+    N --> I
+
+    L --> |Read Only| Users[Public Users]
+    M --> |Authenticated| Business[Business Owners]
+    Users --> |Initiate Claim| N
+    N --> |Verification| Business
+</Mermaid>
+
+## Quick Start
+
+### Search for Listings
 
 <CodeGroup>
 ```bash cURL
@@ -65,22 +87,102 @@ const listings = await palm.listings.search({
   jurisdiction: 'CA'
 });
 ```
+
+```python Python
+listings = palm.listings.search(
+    query='acme',
+    jurisdiction='CA'
+)
+```
 </CodeGroup>
 
-## Search Parameters
+### Get a Specific Listing
 
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `query` | Business name or ID | `acme` |
-| `jurisdiction` | State code | `CA` |
-| `status` | Registration status | `active` |
-| `entityType` | Type of entity | `corporation` |
-| `page` | Page number | `1` |
-| `limit` | Results per page | `10` |
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.palm.com/v1/listings/list_123abc" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
 
-## Claim a Listing
+```typescript Node
+const listing = await palm.listings.retrieve('list_123abc');
+```
 
-```bash
+```python Python
+listing = palm.listings.retrieve('list_123abc')
+```
+</CodeGroup>
+
+## Core Data Models
+
+### Business Listing Object
+
+```typescript
+interface BusinessListing {
+  id: string;                    // Unique identifier
+  business_name: string;         // Legal business name
+  dba_names: string[];          // Doing Business As names
+  entity_type: string;          // Business structure type
+  formation_state: string;      // State of formation
+  formation_date: string;       // Date of formation
+  status: string;              // Current status
+  registered_address: Address;  // Primary address
+  mailing_address?: Address;    // Optional mailing address
+  entity_number: string;       // State registration number
+  jurisdiction: string;        // Registration jurisdiction
+  registered_agent?: {
+    name: string;
+    address: Address;
+  };
+  data_sources: DataSourceMetadata[];
+  industry_categories?: string[];
+  location_coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  website?: string;
+  social_profiles?: SocialProfile[];
+  last_verified: string;
+  confidence_score: number;
+  data_completeness: number;
+  is_claimed: boolean;
+  claim_status?: 'pending' | 'verified' | 'rejected';
+  has_profile?: boolean;
+}
+```
+
+### Search Parameters
+
+| Parameter | Type | Description | Example |
+|-----------|------|-------------|---------|
+| `query` | string | Business name or ID | `acme` |
+| `jurisdiction` | string | State code | `CA` |
+| `status` | string | Registration status | `active` |
+| `entityType` | string | Type of entity | `corporation` |
+| `page` | number | Page number | `1` |
+| `limit` | number | Results per page | `10` |
+
+## Claiming a Listing
+
+<CardGroup cols={2}>
+  <Card title="Document Upload" icon="file-upload">
+    Submit formation documents or business licenses
+  </Card>
+  <Card title="Agent Verification" icon="user-check">
+    Verify through registered agent details
+  </Card>
+  <Card title="EIN Match" icon="hashtag">
+    Match employer identification number
+  </Card>
+  <Card title="Manual Review" icon="eye">
+    Submit for manual verification process
+  </Card>
+</CardGroup>
+
+### Initiate a Claim
+
+<CodeGroup>
+```bash cURL
 curl -X POST "https://api.palm.com/v1/listings/{listingId}/claim" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
@@ -94,83 +196,61 @@ curl -X POST "https://api.palm.com/v1/listings/{listingId}/claim" \
   }'
 ```
 
-## Verification Methods
+```typescript Node
+const claim = await palm.listings.claim(listingId, {
+  verificationMethod: 'DOCUMENT',
+  documents: [{
+    type: 'FORMATION',
+    file: documentFile
+  }]
+});
+```
+</CodeGroup>
 
-<CardGroup cols={2}>
-  <Card title="Document Upload" icon="file-upload">
-    Submit formation documents
-  </Card>
-  <Card title="Agent Verification" icon="user-check">
-    Verify through registered agent
-  </Card>
-  <Card title="EIN Match" icon="hashtag">
-    Match tax ID number
-  </Card>
-  <Card title="Manual Review" icon="eye">
-    Submit for manual verification
-  </Card>
-</CardGroup>
-
-## Claim Status
+### Claim Status Definitions
 
 | Status | Description |
 |--------|-------------|
 | `UNCLAIMED` | No active claims |
-| `PENDING` | Claim under review |
-| `VERIFIED` | Claim approved |
-| `REJECTED` | Claim rejected |
-| `DISPUTED` | Claim disputed |
-
-## Response Example
-
-```json
-{
-  "success": true,
-  "data": {
-    "claim": {
-      "id": "claim_123abc",
-      "listingId": "list_789xyz",
-      "status": "PENDING",
-      "verificationMethod": "DOCUMENT",
-      "submittedAt": "2024-01-30T12:00:00Z",
-      "documents": [
-        {
-          "id": "doc_456def",
-          "type": "FORMATION",
-          "status": "PENDING"
-        }
-      ]
-    }
-  }
-}
-```
+| `PENDING` | Under review |
+| `VERIFIED` | Approved |
+| `REJECTED` | Declined |
+| `DISPUTED` | In dispute |
 
 ## Error Handling
 
 <CodeGroup>
-```json 400 Invalid Claim
+```json 400 Invalid Request
 {
-  "success": false,
   "error": {
-    "code": "INVALID_CLAIM",
-    "message": "Cannot claim inactive business",
+    "code": "INVALID_REQUEST",
+    "message": "Missing required fields",
     "details": {
-      "listingId": "list_123abc",
-      "status": "INACTIVE"
+      "fields": ["verificationMethod"]
     }
   }
 }
 ```
 
-```json 409 Existing Claim
+```json 404 Not Found
 {
-  "success": false,
   "error": {
-    "code": "EXISTING_CLAIM",
-    "message": "Listing already has an active claim",
+    "code": "NOT_FOUND",
+    "message": "Listing not found",
     "details": {
-      "listingId": "list_123abc",
-      "existingClaimId": "claim_456def"
+      "id": "list_123abc"
+    }
+  }
+}
+```
+
+```json 429 Rate Limited
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests",
+    "details": {
+      "reset_at": "2024-01-30T16:00:00Z"
     }
   }
 }
@@ -181,16 +261,38 @@ curl -X POST "https://api.palm.com/v1/listings/{listingId}/claim" \
 
 1. **Search First**: Always search for existing listings before creating new profiles
 2. **Verify Information**: Cross-check listing details with official records
-3. **Document Ready**: Have verification documents prepared before claiming
-4. **Monitor Status**: Set up webhooks to track claim status changes
+3. **Document Ready**: Prepare verification documents before claiming
+4. **Monitor Status**: Use webhooks to track claim status changes
+5. **Handle Errors**: Implement proper error handling for all API responses
 
-## Related Guides
+## Data Quality Features
+
+- **Normalization**: Standardized data format across sources
+- **Deduplication**: Advanced entity matching prevents duplicates
+- **Enrichment**: Additional data points from various sources
+- **Confidence Scoring**: Quality scores based on verification status
+
+## Rate Limits
+
+| Endpoint | Rate Limit | Window |
+|----------|------------|--------|
+| Search | 100 requests | per minute |
+| Retrieve | 200 requests | per minute |
+| Claim | 10 requests | per minute |
+
+## Related Resources
 
 <CardGroup cols={2}>
   <Card title="Business Verification" icon="shield-check" href="/guides/business-verification">
-    Learn about verification requirements
+    Learn about verification requirements and processes
   </Card>
   <Card title="Document Management" icon="file" href="/api-reference/documents/overview">
-    Handle verification documents
+    Handle verification documents efficiently
+  </Card>
+  <Card title="Webhooks Guide" icon="bell" href="/guides/webhook-integration">
+    Set up status change notifications
+  </Card>
+  <Card title="API Security" icon="lock" href="/guides/api-security">
+    Understand security best practices
   </Card>
 </CardGroup>
