@@ -78,7 +78,10 @@
         {
           "group": "Listings",
           "pages": [
-            "api-reference/listings/overview"
+            "api-reference/listings/overview",
+            "api-reference/listings/search",
+            "api-reference/listings/retrieve",
+            "api-reference/listings/claim"
           ]
         },
         {
