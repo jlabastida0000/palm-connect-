@@ -1,0 +1,176 @@
+type DocumentCategory =
+  | 'formation'
+  | 'compliance'
+  | 'identification'
+  | 'verification'
+  | 'correspondence'
+  | 'financial'
+  | 'licenses';
+
+type DocumentType =
+  | 'articles_of_incorporation'
+  | 'operating_agreement'
+  | 'annual_report'
+  | 'boi_filing'
+  | 'soi_filing'
+  | 'government_id'
+  | 'proof_of_address'
+  | 'tax_document'
+  | 'certificate'
+  | 'permit'
+  | 'correspondence';
+
+type DocumentStatus =
+  | 'pending'
+  | 'verified'
+  | 'rejected'
+  | 'expired'
+  | 'archived';
+
+type StakeholderType =
+  | 'individual'
+  | 'entity'
+  | 'trust';
+
+type OwnershipType =
+  | 'direct'
+  | 'indirect'
+  | 'beneficial';
+
+type BOICompliance = {
+  status: ComplianceStatus;
+  dueDate: string;
+  filedDate?: string;
+  exemptionType?: string;
+  exemptionReason?: string;
+  lastVerified?: string;
+};
+
+type SOICompliance = {
+  status: ComplianceStatus;
+  lastFiled?: string;
+  nextDue: string;
+  jurisdiction: string;
+  requirements: {
+    frequency: 'annual' | 'biennial';
+    fee: number;
+    gracePeriod: number;
+  };
+};
+
+type Filing = {
+  id: string;
+  type: string;
+  jurisdiction: string;
+  filedDate: string;
+  effectiveDate: string;
+  status: string;
+  documents: Document[];
+};
+
+type ProfileMetadata = {
+  createdAt: string;
+  updatedAt: string;
+  verifiedAt?: string;
+  source: DataSource;
+  confidence: number;
+  verificationHistory: Array<{
+    date: string;
+    method: string;
+    result: string;
+    agent: string;
+  }>;
+};
+
+type Address = {
+  street1: string;
+  street2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  type: 'physical' | 'mailing' | 'registered';
+  validFrom: string;
+  validTo?: string;
+};
+
+type DataSource =
+  | 'state_records'
+  | 'user_submission'
+  | 'third_party'
+  | 'manual_review'
+  | 'automated_match';
+
+type ListingSource =
+  | 'state_registry'
+  | 'federal_registry'
+  | 'third_party_data'
+  | 'user_submission';
+
+type ClaimStatus =
+  | 'unclaimed'
+  | 'pending'
+  | 'verified'
+  | 'rejected'
+  | 'disputed';
+
+// For handling uploaded files and documents
+interface FileMetadata {
+  id: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  checksums: {
+    md5: string;
+    sha256: string;
+  };
+  status: 'pending' | 'processed' | 'error';
+}
+
+// For tracking changes to profiles
+interface AuditLog {
+  id: string;
+  profileId: string;
+  action: 'create' | 'update' | 'delete';
+  field?: string;
+  oldValue?: any;
+  newValue?: any;
+  timestamp: string;
+  actor: string;
+  ipAddress: string;
+  userAgent: string;
+}
+
+// For managing access to profiles
+interface AccessControl {
+  profileId: string;
+  permissions: {
+    read: string[];
+    write: string[];
+    admin: string[];
+  };
+  restrictions: {
+    type: string;
+    description: string;
+    appliedBy: string;
+    appliedAt: string;
+    expiresAt?: string;
+  }[];
+  visibility: 'private' | 'public' | 'limited';
+}
+
+// For managing profile verification steps
+interface VerificationStep {
+  id: string;
+  profileId: string;
+  type: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  requiredDocuments: string[];
+  submittedDocuments: Document[];
+  verifiedBy?: string;
+  verifiedAt?: string;
+  notes?: string;
+  nextStep?: string;
+}
