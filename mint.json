@@ -17,25 +17,7 @@
       "to": "#55D799"
     }
   },
-  "theme": {
-    "typography": {
-      "dark": {
-        "default": "#E4E4E7",
-        "secondary": "#A1A1AA"
-      }
-    },
-    "sidebar": {
-      "dark": {
-        "background": "#1A1A1A",
-        "activeBackground": "#262626"
-      }
-    },
-    "navbar": {
-      "dark": {
-        "background": "#1A1A1A"
-      }
-    }
-  },
+  "theme": "prism",
   "topbarLinks": [
     {
       "name": "Support",
