@@ -1,3 +1,219 @@
+---
+title: 'Core Data Models'
+description: 'Reference documentation for Palm API data models and schemas'
+---
+
+# Core Data Models
+
+This reference documentation outlines the core data models used throughout the Palm API. These models define the structure and relationships of key business entities, stakeholders, documents, and compliance information.
+
+## Profile Model
+
+The Profile model represents a comprehensive business entity profile, including registration details, contact information, and compliance status.
+
+<CodeGroup>
+```typescript Profile
+interface Profile {
+  id: string;                    // Unique identifier
+  entityIdNumber: string;        // State registration number
+  name: string;                  // Legal business name
+  dba?: string[];               // Doing Business As names
+  entityType: EntityType;        // Business structure
+  jurisdiction: string;          // Registration state
+  status: EntityStatus;          // Current status
+  registrationDate: string;      // Formation date
+  goodStanding: boolean;         // State compliance status
+
+  // Registration Details
+  registrationDetails: {
+    number: string;             // State ID
+    jurisdiction: string;       // State/territory
+    formationDate: string;      // Initial filing date
+    status: string;             // Current status
+    lastUpdated: string;        // Last state update
+  };
+
+  // Contact Information
+  contact: {
+    address: Address;           // Primary address
+    mailingAddress?: Address;   // Mailing address
+    phone?: string;             // Contact phone
+    email?: string;             // Contact email
+    website?: string;           // Business website
+  };
+
+  // Compliance Information
+  compliance: {
+    status: ComplianceStatus;   // Overall status
+    boi: BOICompliance;         // BOI status
+    soi: SOICompliance;         // SOI status
+    filings: Filing[];          // Filing history
+  };
+
+  metadata: ProfileMetadata;    // Additional metadata
+}
+```
+</CodeGroup>
+
+## Stakeholder Model
+
+The Stakeholder model defines individuals or entities with ownership or control interests in a business entity.
+
+<CodeGroup>
+```typescript Stakeholder
+interface Stakeholder {
+  id: string;
+  profileId: string;
+  type: StakeholderType;        // Individual/Entity
+
+  // Personal Information
+  personalInfo?: {
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+    nationality: string;
+    taxId?: string;             // SSN/EIN
+  };
+
+  // Entity Information
+  entityInfo?: {
+    name: string;
+    jurisdiction: string;
+    registrationNumber: string;
+    type: string;
+  };
+
+  // Ownership Structure
+  ownership: {
+    percentage: number;         // Ownership %
+    type: OwnershipType;       // Direct/Indirect
+    startDate: string;         // Acquisition date
+    endDate?: string;          // Termination date
+    isBeneficialOwner: boolean;
+  };
+
+  // Verification
+  verification: {
+    status: VerificationStatus;
+    method: string;
+    verifiedAt?: string;
+    documents: Document[];
+  };
+}
+```
+</CodeGroup>
+
+## Document Model
+
+The Document model represents files and records associated with business entities and stakeholders.
+
+<CodeGroup>
+```typescript Document
+interface Document {
+  id: string;
+  profileId: string;
+  type: DocumentType;
+  category: DocumentCategory;
+  status: DocumentStatus;
+  
+  metadata: {
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+    uploadedAt: string;
+    verifiedAt?: string;
+  };
+  
+  verification: {
+    status: VerificationStatus;
+    verifiedAt?: string;
+    verifiedBy?: string;
+    method: string;
+  };
+}
+```
+</CodeGroup>
+
+## Listing Model
+
+The BusinessListing model represents business records from various data sources that can be claimed and linked to profiles.
+
+<CodeGroup>
+```typescript BusinessListing
+interface BusinessListing {
+  id: string;
+  source: ListingSource;       // Data source
+  entityId: string;            // State ID
+  name: string;                // Business name
+  jurisdiction: string;        // State
+  registrationDate?: string;   // Formation date
+  status: string;              // Current status
+  
+  matchData?: {
+    confidence: number;        // Match score
+    matchedProfileId?: string; // Linked profile
+    matchMethod: string;       // Match method
+  };
+  
+  claim?: {
+    status: ClaimStatus;
+    claimedBy?: string;
+    claimedAt?: string;
+    verificationMethod?: string;
+  };
+}
+```
+</CodeGroup>
+
+## Supporting Types
+
+### Entity Types
+
+<CodeGroup>
+```typescript EntityType
+type EntityType = 
+  | 'corporation'
+  | 'llc'
+  | 'partnership'
+  | 'sole_proprietorship';
+```
+</CodeGroup>
+
+### Status Types
+
+<CodeGroup>
+```typescript Status
+type EntityStatus = 
+  | 'active'
+  | 'inactive'
+  | 'dissolved'
+  | 'suspended';
+
+type ComplianceStatus =
+  | 'compliant'
+  | 'non_compliant'
+  | 'pending'
+  | 'exempt';
+
+type VerificationStatus =
+  | 'pending'
+  | 'verified'
+  | 'rejected'
+  | 'expired';
+
+type DocumentStatus =
+  | 'pending'
+  | 'verified'
+  | 'rejected'
+  | 'expired'
+  | 'archived';
+```
+</CodeGroup>
+
+### Document Categories and Types
+
+<CodeGroup>
+```typescript Document
 type DocumentCategory =
   | 'formation'
   | 'compliance'
@@ -19,14 +235,13 @@ type DocumentType =
   | 'certificate'
   | 'permit'
   | 'correspondence';
+```
+</CodeGroup>
 
-type DocumentStatus =
-  | 'pending'
-  | 'verified'
-  | 'rejected'
-  | 'expired'
-  | 'archived';
+### Stakeholder Types
 
+<CodeGroup>
+```typescript Stakeholder
 type StakeholderType =
   | 'individual'
   | 'entity'
@@ -36,7 +251,13 @@ type OwnershipType =
   | 'direct'
   | 'indirect'
   | 'beneficial';
+```
+</CodeGroup>
 
+### Compliance Types
+
+<CodeGroup>
+```typescript Compliance
 type BOICompliance = {
   status: ComplianceStatus;
   dueDate: string;
@@ -57,31 +278,13 @@ type SOICompliance = {
     gracePeriod: number;
   };
 };
+```
+</CodeGroup>
 
-type Filing = {
-  id: string;
-  type: string;
-  jurisdiction: string;
-  filedDate: string;
-  effectiveDate: string;
-  status: string;
-  documents: Document[];
-};
+### Common Types
 
-type ProfileMetadata = {
-  createdAt: string;
-  updatedAt: string;
-  verifiedAt?: string;
-  source: DataSource;
-  confidence: number;
-  verificationHistory: Array<{
-    date: string;
-    method: string;
-    result: string;
-    agent: string;
-  }>;
-};
-
+<CodeGroup>
+```typescript Common
 type Address = {
   street1: string;
   street2?: string;
@@ -113,8 +316,13 @@ type ClaimStatus =
   | 'verified'
   | 'rejected'
   | 'disputed';
+```
+</CodeGroup>
 
-// For handling uploaded files and documents
+### File Management
+
+<CodeGroup>
+```typescript File
 interface FileMetadata {
   id: string;
   fileName: string;
@@ -128,8 +336,13 @@ interface FileMetadata {
   };
   status: 'pending' | 'processed' | 'error';
 }
+```
+</CodeGroup>
 
-// For tracking changes to profiles
+### Audit and Access Control
+
+<CodeGroup>
+```typescript Audit
 interface AuditLog {
   id: string;
   profileId: string;
@@ -143,7 +356,6 @@ interface AuditLog {
   userAgent: string;
 }
 
-// For managing access to profiles
 interface AccessControl {
   profileId: string;
   permissions: {
@@ -160,8 +372,13 @@ interface AccessControl {
   }[];
   visibility: 'private' | 'public' | 'limited';
 }
+```
+</CodeGroup>
 
-// For managing profile verification steps
+### Verification Process
+
+<CodeGroup>
+```typescript Verification
 interface VerificationStep {
   id: string;
   profileId: string;
@@ -174,3 +391,5 @@ interface VerificationStep {
   notes?: string;
   nextStep?: string;
 }
+```
+</CodeGroup>
