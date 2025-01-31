@@ -1,10 +1,10 @@
 {
   "name": "Palm API",
   "logo": {
-    "light": "https://userimg-assets.customeriomail.com/images/client-env-146826/1711786377340_logo56_01HT76PJ8B05CWK4FZKVK64K0H.png"
+    "light": "https://userimg-assets.customeriomail.com/images/client-env-146826/1706535409485_flogo_jan_29_2024_01HNAPZND5BXGK7SSP6QMDE384.png",
     "dark": "https://userimg-assets.customeriomail.com/images/client-env-146826/1711786377340_logo56_01HT76PJ8B05CWK4FZKVK64K0H.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://userimg-assets.customeriomail.com/images/client-env-146826/1709917742066_palmicon_01HRFGM9QX34H6SRVP6DAEW4GS.png",
   "colors": {
     "primary": "#7BEA4D",
     "light": "#55D799",
