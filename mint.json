@@ -7,7 +7,7 @@
   "favicon": "https://userimg-assets.customeriomail.com/images/client-env-146826/1709917742066_palmicon_01HRFGM9QX34H6SRVP6DAEW4GS.png",
   "colors": {
     "primary": "#7BEA4D",
-    "light": "#55D799",
+    "light": "#55D799", 
     "dark": "#1F3B33",
     "background": {
       "dark": "#121212"
@@ -98,10 +98,15 @@
           "group": "Stakeholders",
           "pages": [
             "api-reference/stakeholders/overview",
-            "api-reference/stakeholders/owners",
-            "api-reference/stakeholders/create-owner",
-            "api-reference/stakeholders/get-owner",
-            "api-reference/stakeholders/list-owners"
+            {
+              "group": "Owners",
+              "pages": [
+                "api-reference/stakeholders/owners",
+                "api-reference/stakeholders/create-owner",
+                "api-reference/stakeholders/get-owner",
+                "api-reference/stakeholders/list-owners"
+              ]
+            }
           ]
         },
         "api-reference/core-data-models"
@@ -137,7 +142,6 @@
     "discord": "https://discord.gg/palm",
     "twitter": "https://twitter.com/palm"
   },
-
   "feedback": {
     "thumbsRating": true,
     "suggestEdit": true
