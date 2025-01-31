@@ -97,7 +97,8 @@
         {
           "group": "Stakeholders",
           "pages": [
-            "api-reference/stakeholders/overview"
+            "api-reference/stakeholders/overview",
+            "api-reference/stakeholders/owners"
           ]
         },
         "api-reference/core-data-models"
