@@ -100,7 +100,6 @@
             "api-reference/stakeholders/overview",
             "api-reference/stakeholders/owners",
             "api-reference/stakeholders/create-owner"
-            
           ]
         },
         "api-reference/core-data-models"
@@ -135,7 +134,8 @@
     "github": "https://github.com/palm",
     "discord": "https://discord.gg/palm",
     "twitter": "https://twitter.com/palm"
-  },
+  },            "api-reference/stakeholders/owners",
+
   "feedback": {
     "thumbsRating": true,
     "suggestEdit": true
