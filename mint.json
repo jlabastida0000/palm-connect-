@@ -91,6 +91,7 @@
             "api-reference/profiles/overview",
             "api-reference/profiles/create",
             "api-reference/profiles/list"
+            "api-reference/profiles/retrieve"
           ]
         },
         {

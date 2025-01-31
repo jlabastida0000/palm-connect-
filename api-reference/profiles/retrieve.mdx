@@ -1,0 +1,157 @@
+---
+title: 'Get Profile'
+description: 'Retrieve a business entity profile by ID'
+api: 'GET /api/v1/profiles/{profileId}'
+---
+
+Retrieve complete information about a business entity profile, including registration details, compliance status, and associated records.
+
+## Path Parameters
+<ParamField path="profileId" type="string" required>
+  Unique identifier of the profile to retrieve
+</ParamField>
+
+## Query Parameters
+<ParamField query="include" type="array">
+  Additional related records to include (e.g., "stakeholders", "documents", "filings")
+</ParamField>
+
+## Response
+<ResponseField name="data" type="object">
+  <Expandable title="Response Properties">
+    <ResponseField name="id" type="string">
+      Profile unique identifier
+    </ResponseField>
+    <ResponseField name="profile" type="object">
+      <Expandable title="Profile Data">
+        <ResponseField name="name" type="string">
+          Legal business name
+        </ResponseField>
+        <ResponseField name="dba" type="array">
+          Doing Business As names
+        </ResponseField>
+        <ResponseField name="entityType" type="string">
+          Business structure type
+        </ResponseField>
+        <ResponseField name="jurisdiction" type="string">
+          Registration jurisdiction
+        </ResponseField>
+        <ResponseField name="registrationDetails" type="object">
+          Registration information
+        </ResponseField>
+        <ResponseField name="contact" type="object">
+          Contact information
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="compliance" type="object">
+      <Expandable title="Compliance Status">
+        <ResponseField name="status" type="string">
+          Overall compliance status
+        </ResponseField>
+        <ResponseField name="verificationStatus" type="string">
+          Verification status
+        </ResponseField>
+        <ResponseField name="requirements" type="array">
+          Active compliance requirements
+        </ResponseField>
+        <ResponseField name="filings" type="array">
+          Recent filing history
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="metadata" type="object">
+      Profile metadata and timestamps
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash Example Request
+curl --request GET \
+  --url 'https://api.getpalm.com/v1/profiles/prof_01H9X8A3B4C5D6E7F8G9H0J1K2?include=stakeholders,documents' \
+  --header 'Authorization: Bearer YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "id": "prof_01H9X8A3B4C5D6E7F8G9H0J1K2",
+    "profile": {
+      "name": "Acme Corporation",
+      "dba": ["Acme Tech Solutions"],
+      "entityType": "corporation",
+      "jurisdiction": "DE",
+      "registrationDetails": {
+        "number": "5678901",
+        "formationDate": "2024-01-15",
+        "status": "active",
+        "goodStanding": true,
+        "lastVerified": "2024-01-30T16:45:00Z"
+      },
+      "contact": {
+        "address": {
+          "street1": "100 Innovation Drive",
+          "city": "Wilmington",
+          "state": "DE",
+          "postalCode": "19801",
+          "country": "US"
+        },
+        "phone": "+13025551234",
+        "email": "contact@acmecorp.com",
+        "website": "https://acmecorp.com"
+      }
+    },
+    "compliance": {
+      "status": "compliant",
+      "verificationStatus": "verified",
+      "requirements": [
+        {
+          "type": "annual_report",
+          "dueDate": "2025-01-15",
+          "status": "upcoming"
+        },
+        {
+          "type": "business_license",
+          "status": "active",
+          "expirationDate": "2025-01-30"
+        }
+      ],
+      "filings": [
+        {
+          "id": "fil_01H9X8A3B4C5D6E7F8G9",
+          "type": "initial_report",
+          "status": "completed",
+          "filedDate": "2024-01-15"
+        }
+      ]
+    },
+    "metadata": {
+      "createdAt": "2024-01-30T16:45:00Z",
+      "updatedAt": "2024-01-30T16:45:00Z",
+      "verifiedAt": "2024-01-30T16:45:00Z"
+    },
+    "stakeholders": [
+      {
+        "id": "stk_01H9X8A3B4C5D6E7F8G9",
+        "type": "individual",
+        "role": "director",
+        "name": "Jane Smith",
+        "ownershipPercentage": 51,
+        "verificationStatus": "verified"
+      }
+    ],
+    "documents": [
+      {
+        "id": "doc_01H9X8A3B4C5D6E7F8G9",
+        "type": "certificate_of_incorporation",
+        "status": "verified",
+        "uploadedAt": "2024-01-30T16:45:00Z"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
