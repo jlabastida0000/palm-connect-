@@ -98,15 +98,10 @@
           "group": "Stakeholders",
           "pages": [
             "api-reference/stakeholders/overview",
-            {
-              "group": "Owners",
-              "pages": [
-                "api-reference/stakeholders/owners",
-                "api-reference/stakeholders/create-owner",
-                "api-reference/stakeholders/get-owner",
-                "api-reference/stakeholders/list-owners"
-              ]
-            }
+            "api-reference/stakeholders/owners",
+            "api-reference/stakeholders/create-owner",
+            "api-reference/stakeholders/get-owner",
+            "api-reference/stakeholders/list-owners"
           ]
         },
         "api-reference/core-data-models"
