@@ -1,0 +1,224 @@
+---
+title: 'Verify Document'
+description: 'Verify a document\'s authenticity'
+api: 'POST /v1/profiles/{profileId}/documents/{documentId}/verify'
+---
+
+Submit a document for verification to confirm its authenticity and validity.
+
+### Path Parameters
+
+<ParamField path="profileId" type="string" required>
+  ID of the business profile
+</ParamField>
+
+<ParamField path="documentId" type="string" required>
+  ID of the document to verify
+</ParamField>
+
+### Request Body
+
+<ParamField body="method" type="string" required>
+  Verification method: "MANUAL", "AUTOMATED", "THIRD_PARTY"
+</ParamField>
+
+<ParamField body="options" type="object">
+  <Expandable title="Verification Options">
+    <ParamField body="checkSignatures" type="boolean">
+      Verify document signatures
+    </ParamField>
+    <ParamField body="validateContent" type="boolean">
+      Validate document content
+    </ParamField>
+    <ParamField body="verifyDates" type="boolean">
+      Verify document dates
+    </ParamField>
+    <ParamField body="thirdPartyProvider" type="string">
+      Specific third-party verification provider
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  <Expandable title="Additional Metadata">
+    <ParamField body="issueDate" type="string">
+      Document issue date
+    </ParamField>
+    <ParamField body="expirationDate" type="string">
+      Document expiration date
+    </ParamField>
+    <ParamField body="issuer" type="string">
+      Document issuing authority
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/profiles/prof_123/documents/doc_123abc/verify" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "AUTOMATED",
+    "options": {
+      "checkSignatures": true,
+      "validateContent": true,
+      "verifyDates": true
+    },
+    "metadata": {
+      "issueDate": "2024-01-15",
+      "issuer": "Secretary of State"
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const verification = await palm.documents.verify('prof_123', 'doc_123abc', {
+  method: 'AUTOMATED',
+  options: {
+    checkSignatures: true,
+    validateContent: true,
+    verifyDates: true
+  },
+  metadata: {
+    issueDate: '2024-01-15',
+    issuer: 'Secretary of State'
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+verification = palm.documents.verify(
+    profile_id='prof_123',
+    document_id='doc_123abc',
+    method='AUTOMATED',
+    options={
+        'check_signatures': True,
+        'validate_content': True,
+        'verify_dates': True
+    },
+    metadata={
+        'issue_date': '2024-01-15',
+        'issuer': 'Secretary of State'
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the verification request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Verification Response">
+    <ResponseField name="id" type="string">
+      Verification request ID
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current verification status
+    </ResponseField>
+    <ResponseField name="results" type="object">
+      Verification results if completed
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "ver_123abc",
+    "status": "IN_PROGRESS",
+    "document": {
+      "id": "doc_123abc",
+      "type": "FORMATION"
+    },
+    "verificationSteps": [
+      {
+        "type": "SIGNATURE_CHECK",
+        "status": "PENDING",
+        "estimatedCompletionTime": "2024-01-30T12:30:00Z"
+      },
+      {
+        "type": "CONTENT_VALIDATION",
+        "status": "PENDING",
+        "estimatedCompletionTime": "2024-01-30T12:45:00Z"
+      }
+    ],
+    "metadata": {
+      "createdAt": "2024-01-30T12:00:00Z",
+      "method": "AUTOMATED",
+      "requestedBy": "user_789xyz"
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_VERIFICATION_METHOD",
+    "message": "Invalid verification method provided",
+    "details": {
+      "allowedMethods": ["MANUAL", "AUTOMATED", "THIRD_PARTY"]
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "DOCUMENT_NOT_VERIFIABLE",
+    "message": "Document cannot be verified in current state",
+    "details": {
+      "reason": "DOCUMENT_CORRUPTED",
+      "documentId": "doc_123abc"
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "VERIFICATION_IN_PROGRESS",
+    "message": "Document already has a verification in progress",
+    "details": {
+      "verificationId": "ver_456def",
+      "startedAt": "2024-01-30T11:45:00Z"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Check Status" icon="clock" href="/api-reference/verification/status">
+  Monitor the document verification progress.
+</Card>
+
+<Card title="Verification History" icon="history" href="/api-reference/verification/history">
+  View previous verification attempts.
+</Card>

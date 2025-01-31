@@ -61,7 +61,9 @@
         {
           "group": "Business Verification",
           "pages": [
-            "api-reference/business-verification/overview"
+            "api-reference/business-verification/overview",
+            "api-reference/business-verification/verifyProfile",
+            "api-reference/business-verification/verifyDocument"
           ]
         },
         {
