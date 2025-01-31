@@ -1,0 +1,174 @@
+---
+title: 'Upload Document'
+description: 'Upload a new document to a business profile'
+api: 'POST /v1/profiles/{profileId}/documents'
+---
+
+Upload a new document to associate with a business profile. Supports multipart form data for file uploads.
+
+### Path Parameters
+
+<ParamField path="profileId" type="string" required>
+  ID of the business profile
+</ParamField>
+
+### Request Body
+
+<ParamField body="file" type="file" required>
+  The document file to upload
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Document type (e.g., "FORMATION", "LICENSE", "COMPLIANCE")
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  <Expandable title="properties">
+    <ParamField body="documentDate" type="string">
+      Date the document was issued (YYYY-MM-DD)
+    </ParamField>
+    <ParamField body="expiresAt" type="string">
+      Expiration date if applicable (YYYY-MM-DD)
+    </ParamField>
+    <ParamField body="description" type="string">
+      Description of the document
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/profiles/prof_123/documents" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@/path/to/document.pdf" \
+  -F "type=FORMATION" \
+  -F 'metadata={"documentDate":"2024-01-15","description":"Articles of Incorporation"}'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+import * as fs from 'fs';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const file = fs.createReadStream('/path/to/document.pdf');
+const document = await palm.documents.upload('prof_123', {
+  file,
+  type: 'FORMATION',
+  metadata: {
+    documentDate: '2024-01-15',
+    description: 'Articles of Incorporation'
+  }
+});
+```
+
+```python Python
+from palm import Palm
+import os
+
+palm = Palm('YOUR_API_KEY')
+
+with open('/path/to/document.pdf', 'rb') as f:
+    document = palm.documents.upload(
+        profile_id='prof_123',
+        file=f,
+        type='FORMATION',
+        metadata={
+            'documentDate': '2024-01-15',
+            'description': 'Articles of Incorporation'
+        }
+    )
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the upload was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Document object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the document
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Document type
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Document status
+    </ResponseField>
+    <ResponseField name="fileName" type="string">
+      Original file name
+    </ResponseField>
+    <ResponseField name="fileSize" type="number">
+      File size in bytes
+    </ResponseField>
+    <ResponseField name="url" type="string">
+      Secure URL to access the document
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "doc_123abc",
+    "type": "FORMATION",
+    "status": "PENDING_REVIEW",
+    "fileName": "articles_of_incorporation.pdf",
+    "fileSize": 1048576,
+    "mimeType": "application/pdf",
+    "url": "https://api.palm.com/v1/documents/doc_123abc/content",
+    "metadata": {
+      "documentDate": "2024-01-15",
+      "description": "Articles of Incorporation"
+    },
+    "uploadedAt": "2024-01-30T12:00:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILE_TYPE",
+    "message": "Unsupported file type",
+    "details": {
+      "supportedTypes": ["pdf", "png", "jpg", "tiff"],
+      "providedType": "doc"
+    }
+  }
+}
+```
+
+```json 413 Payload Too Large
+{
+  "success": false,
+  "error": {
+    "code": "FILE_TOO_LARGE",
+    "message": "File size exceeds maximum limit",
+    "details": {
+      "maxSize": 26214400,
+      "providedSize": 31457280
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Verify Document" icon="shield-check" href="/api-reference/documents/verify">
+  After uploading a document, you may need to verify its authenticity.
+</Card>

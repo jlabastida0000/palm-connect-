@@ -73,7 +73,8 @@
         {
           "group": "Documents",
           "pages": [
-            "api-reference/documents/overview"
+            "api-reference/documents/overview",
+            "api-reference/documents/uploadDocument"
           ]
         },
         {
