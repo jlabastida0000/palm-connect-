@@ -1,0 +1,175 @@
+---
+title: 'Get Document'
+description: 'Retrieve a specific document'
+api: 'GET /v1/profiles/{profileId}/documents/{documentId}'
+---
+
+Retrieve details about a specific document and optionally download its contents.
+
+### Path Parameters
+
+<ParamField path="profileId" type="string" required>
+  ID of the business profile
+</ParamField>
+
+<ParamField path="documentId" type="string" required>
+  ID of the document to retrieve
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="include" type="string">
+  Additional information to include (e.g., "content,metadata")
+</ParamField>
+
+<ParamField query="version" type="string">
+  Specific version of the document to retrieve
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl "https://api.palm.com/v1/profiles/prof_123/documents/doc_123abc" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Download document content
+curl "https://api.palm.com/v1/profiles/prof_123/documents/doc_123abc?include=content" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  --output document.pdf
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+// Get document metadata
+const document = await palm.documents.get('prof_123', 'doc_123abc');
+
+// Download document content
+const content = await palm.documents.download('prof_123', 'doc_123abc');
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+# Get document metadata
+document = palm.documents.get(
+    profile_id='prof_123',
+    document_id='doc_123abc'
+)
+
+# Download document content
+content = palm.documents.download(
+    profile_id='prof_123',
+    document_id='doc_123abc'
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Document object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the document
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Document type
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Document status
+    </ResponseField>
+    <ResponseField name="metadata" type="object">
+      Document metadata
+    </ResponseField>
+    <ResponseField name="verification" type="object">
+      Verification information if verified
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "doc_123abc",
+    "type": "FORMATION",
+    "status": "VERIFIED",
+    "fileName": "articles_of_incorporation.pdf",
+    "fileSize": 1048576,
+    "mimeType": "application/pdf",
+    "metadata": {
+      "documentDate": "2024-01-15",
+      "expiresAt": null,
+      "pages": 5,
+      "description": "Articles of Incorporation"
+    },
+    "verification": {
+      "status": "VERIFIED",
+      "verifiedAt": "2024-01-30T12:30:00Z",
+      "method": "MANUAL_REVIEW",
+      "verifiedBy": "user_789xyz"
+    },
+    "versions": [
+      {
+        "id": "v1",
+        "createdAt": "2024-01-30T12:00:00Z",
+        "fileSize": 1048576,
+        "uploadedBy": "user_123abc"
+      }
+    ],
+    "uploadedAt": "2024-01-30T12:00:00Z",
+    "lastAccessed": "2024-01-30T14:00:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 404 Not Found
+{
+  "success": false,
+  "error": {
+    "code": "DOCUMENT_NOT_FOUND",
+    "message": "Document not found",
+    "details": {
+      "documentId": "doc_123abc"
+    }
+  }
+}
+```
+
+```json 403 Forbidden
+{
+  "success": false,
+  "error": {
+    "code": "INSUFFICIENT_PERMISSIONS",
+    "message": "Insufficient permissions to access document",
+    "details": {
+      "requiredRole": "DOCUMENT_VIEWER"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Update Document" icon="pen" href="/api-reference/documents/update">
+  Learn how to update document metadata or upload a new version.
+</Card>
+
+<Card title="Download Content" icon="download" href="/api-reference/documents/download">
+  Download the document content directly.
+</Card>

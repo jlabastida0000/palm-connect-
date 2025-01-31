@@ -74,7 +74,9 @@
           "group": "Documents",
           "pages": [
             "api-reference/documents/overview",
-            "api-reference/documents/uploadDocument"
+            "api-reference/documents/uploadDocument",
+            "api-reference/documents/getDocument",
+            "api-reference/documents/listDocuments" 
           ]
         },
         {

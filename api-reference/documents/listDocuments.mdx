@@ -1,0 +1,190 @@
+---
+title: 'List Documents'
+description: 'Retrieve a list of documents'
+api: 'GET /v1/profiles/{profileId}/documents'
+---
+
+Retrieve a paginated list of documents associated with a business profile.
+
+### Path Parameters
+
+<ParamField path="profileId" type="string" required>
+  ID of the business profile
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="type" type="string">
+  Filter by document type (e.g., "FORMATION", "LICENSE")
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by document status (e.g., "PENDING", "VERIFIED")
+</ParamField>
+
+<ParamField query="limit" type="number">
+  Number of documents to return (default: 20, max: 100)
+</ParamField>
+
+<ParamField query="offset" type="number">
+  Number of documents to skip (for pagination)
+</ParamField>
+
+<ParamField query="sortBy" type="string">
+  Field to sort by (e.g., "uploadedAt", "fileName")
+</ParamField>
+
+<ParamField query="sortOrder" type="string">
+  Sort order ("asc" or "desc")
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl "https://api.palm.com/v1/profiles/prof_123/documents?type=FORMATION&status=VERIFIED" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const documents = await palm.documents.list('prof_123', {
+  type: 'FORMATION',
+  status: 'VERIFIED',
+  limit: 20,
+  offset: 0
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+documents = palm.documents.list(
+    profile_id='prof_123',
+    type='FORMATION',
+    status='VERIFIED',
+    limit=20,
+    offset=0
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Response Object">
+    <ResponseField name="documents" type="array">
+      Array of document objects
+    </ResponseField>
+    <ResponseField name="pagination" type="object">
+      <Expandable title="Pagination Details">
+        <ResponseField name="total" type="number">
+          Total number of documents
+        </ResponseField>
+        <ResponseField name="limit" type="number">
+          Number of documents per page
+        </ResponseField>
+        <ResponseField name="offset" type="number">
+          Current offset
+        </ResponseField>
+        <ResponseField name="hasMore" type="boolean">
+          Whether there are more documents
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "documents": [
+      {
+        "id": "doc_123abc",
+        "type": "FORMATION",
+        "status": "VERIFIED",
+        "fileName": "articles_of_incorporation.pdf",
+        "fileSize": 1048576,
+        "mimeType": "application/pdf",
+        "metadata": {
+          "documentDate": "2024-01-15",
+          "description": "Articles of Incorporation"
+        },
+        "uploadedAt": "2024-01-30T12:00:00Z"
+      },
+      {
+        "id": "doc_456def",
+        "type": "FORMATION",
+        "status": "VERIFIED",
+        "fileName": "operating_agreement.pdf",
+        "fileSize": 2097152,
+        "mimeType": "application/pdf",
+        "metadata": {
+          "documentDate": "2024-01-15",
+          "description": "Operating Agreement"
+        },
+        "uploadedAt": "2024-01-30T13:00:00Z"
+      }
+    ],
+    "pagination": {
+      "total": 45,
+      "limit": 20,
+      "offset": 0,
+      "hasMore": true
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_PARAMETER",
+    "message": "Invalid document type provided",
+    "details": {
+      "parameter": "type",
+      "validTypes": ["FORMATION", "LICENSE", "COMPLIANCE"]
+    }
+  }
+}
+```
+
+```json 403 Forbidden
+{
+  "success": false,
+  "error": {
+    "code": "INSUFFICIENT_PERMISSIONS",
+    "message": "Insufficient permissions to list documents",
+    "details": {
+      "requiredRole": "DOCUMENT_VIEWER"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Upload Document" icon="upload" href="/api-reference/documents/upload">
+  Add new documents to the profile.
+</Card>
+
+<Card title="Download Documents" icon="download" href="/api-reference/documents/download">
+  Learn how to download document content.
+</Card>
