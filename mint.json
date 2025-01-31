@@ -99,9 +99,9 @@
           "pages": [
             "api-reference/stakeholders/overview",
             "api-reference/stakeholders/owners",
-            "api-reference/stakeholders/create-owner",
-            "api-reference/stakeholders/get-owner",
-            "api-reference/stakeholders/list-owners"
+            "api-reference/stakeholders/createOwner",
+            "api-reference/stakeholders/getOwner",
+            "api-reference/stakeholders/listOwners"
           ]
         },
         "api-reference/core-data-models"
