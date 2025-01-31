@@ -127,10 +127,46 @@ verification = palm.documents.verify(
       Verification request ID
     </ResponseField>
     <ResponseField name="status" type="string">
-      Current verification status
+      Current verification status: "PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"
     </ResponseField>
-    <ResponseField name="results" type="object">
-      Verification results if completed
+    <ResponseField name="document" type="object">
+      Document information
+      <Expandable title="properties">
+        <ResponseField name="id" type="string">
+          Document identifier
+        </ResponseField>
+        <ResponseField name="type" type="string">
+          Type of document (e.g., "FORMATION")
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="verificationSteps" type="array">
+      List of verification steps
+      <Expandable title="properties">
+        <ResponseField name="type" type="string">
+          Type of verification step (e.g., "SIGNATURE_CHECK", "CONTENT_VALIDATION")
+        </ResponseField>
+        <ResponseField name="status" type="string">
+          Status of this step: "PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"
+        </ResponseField>
+        <ResponseField name="estimatedCompletionTime" type="string">
+          Estimated completion time in ISO 8601 format
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="metadata" type="object">
+      Additional verification metadata
+      <Expandable title="properties">
+        <ResponseField name="createdAt" type="string">
+          Timestamp when verification was initiated (ISO 8601)
+        </ResponseField>
+        <ResponseField name="method" type="string">
+          Verification method used
+        </ResponseField>
+        <ResponseField name="requestedBy" type="string">
+          ID of the user who requested verification
+        </ResponseField>
+      </Expandable>
     </ResponseField>
   </Expandable>
 </ResponseField>
