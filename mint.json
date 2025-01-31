@@ -98,7 +98,9 @@
           "group": "Stakeholders",
           "pages": [
             "api-reference/stakeholders/overview",
-            "api-reference/stakeholders/owners"
+            "api-reference/stakeholders/owners",
+            "api-reference/stakeholders/create-owner"
+            
           ]
         },
         "api-reference/core-data-models"

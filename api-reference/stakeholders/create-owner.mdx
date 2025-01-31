@@ -1,0 +1,241 @@
+---
+title: 'Create Owner'
+description: 'Add a new owner to a business profile'
+api: 'POST /v1/profiles/{profileId}/stakeholders/owners'
+---
+
+Add a new owner to an existing business profile. This endpoint handles both individual and entity owners.
+
+### Request Body
+
+<ParamField body="type" type="string" required>
+  Type of owner - either "INDIVIDUAL" or "ENTITY"
+</ParamField>
+
+<ParamField body="ownershipDetails" type="object" required>
+  <Expandable title="properties">
+    <ParamField body="percentage" type="number" required>
+      Ownership percentage (0-100)
+    </ParamField>
+    <ParamField body="type" type="string" required>
+      Type of ownership ("DIRECT" or "INDIRECT")
+    </ParamField>
+    <ParamField body="isBeneficialOwner" type="boolean" required>
+      Whether this owner meets beneficial ownership criteria
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="individual" type="object">
+  Required if type is "INDIVIDUAL"
+  <Expandable title="properties">
+    <ParamField body="firstName" type="string" required>
+      First name
+    </ParamField>
+    <ParamField body="lastName" type="string" required>
+      Last name
+    </ParamField>
+    <ParamField body="dateOfBirth" type="string">
+      Date of birth (YYYY-MM-DD)
+    </ParamField>
+    <ParamField body="address" type="object" required>
+      <Expandable title="properties">
+        <ParamField body="line1" type="string" required>
+          Street address
+        </ParamField>
+        <ParamField body="city" type="string" required>
+          City
+        </ParamField>
+        <ParamField body="state" type="string" required>
+          State code
+        </ParamField>
+        <ParamField body="postalCode" type="string" required>
+          Postal code
+        </ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/profiles/prof_123/stakeholders/owners" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "INDIVIDUAL",
+    "ownershipDetails": {
+      "percentage": 51.5,
+      "type": "DIRECT",
+      "isBeneficialOwner": true
+    },
+    "individual": {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "dateOfBirth": "1980-01-15",
+      "address": {
+        "line1": "123 Main St",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105"
+      }
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const owner = await palm.stakeholders.owners.create('prof_123', {
+  type: "INDIVIDUAL",
+  ownershipDetails: {
+    percentage: 51.5,
+    type: "DIRECT",
+    isBeneficialOwner: true
+  },
+  individual: {
+    firstName: "Jane",
+    lastName: "Smith",
+    dateOfBirth: "1980-01-15",
+    address: {
+      line1: "123 Main St",
+      city: "San Francisco",
+      state: "CA",
+      postalCode: "94105"
+    }
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+owner = palm.stakeholders.owners.create(
+    profile_id="prof_123",
+    type="INDIVIDUAL",
+    ownership_details={
+        "percentage": 51.5,
+        "type": "DIRECT",
+        "is_beneficial_owner": True
+    },
+    individual={
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "date_of_birth": "1980-01-15",
+        "address": {
+            "line1": "123 Main St",
+            "city": "San Francisco",
+            "state": "CA",
+            "postal_code": "94105"
+        }
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Owner object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the owner
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Type of owner
+    </ResponseField>
+    <ResponseField name="ownershipDetails" type="object">
+      Ownership information
+    </ResponseField>
+    <ResponseField name="individual" type="object">
+      Individual's details
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current status (ACTIVE/INACTIVE)
+    </ResponseField>
+    <ResponseField name="verificationStatus" type="string">
+      Verification status
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "own_123abc",
+    "type": "INDIVIDUAL",
+    "ownershipDetails": {
+      "percentage": 51.5,
+      "type": "DIRECT",
+      "isBeneficialOwner": true
+    },
+    "individual": {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "dateOfBirth": "1980-01-15",
+      "address": {
+        "line1": "123 Main St",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105"
+      }
+    },
+    "status": "ACTIVE",
+    "verificationStatus": "PENDING",
+    "metadata": {
+      "createdAt": "2024-01-30T12:00:00Z",
+      "createdBy": "api"
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_OWNERSHIP",
+    "message": "Total ownership percentage cannot exceed 100%",
+    "details": {
+      "currentTotal": 60,
+      "newAmount": 51.5,
+      "wouldExceed": 111.5
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "DUPLICATE_OWNER",
+    "message": "An owner with these details already exists",
+    "details": {
+      "existingOwnerId": "own_456def"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Verify Owner" icon="shield-check" href="/api-reference/stakeholders/verify-owner">
+  After creating an owner, you'll need to verify their identity and ownership claims.
+</Card>
