@@ -1,0 +1,79 @@
+---
+title: 'List Owners'
+description: 'Retrieve a list of all owners for a business profile'
+api: 'GET /v1/profiles/{profileId}/stakeholders/owners'
+---
+
+Get a paginated list of all owners associated with a business profile, with optional filtering.
+
+### Path Parameters
+
+<ParamField path="profileId" type="string" required>
+  ID of the business profile
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="type" type="string">
+  Filter by owner type ("INDIVIDUAL" or "ENTITY")
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by status ("ACTIVE" or "INACTIVE")
+</ParamField>
+
+<ParamField query="verificationStatus" type="string">
+  Filter by verification status ("PENDING", "VERIFIED", "REJECTED")
+</ParamField>
+
+<ParamField query="limit" type="number">
+  Number of records to return (default: 20, max: 100)
+</ParamField>
+
+<ParamField query="offset" type="number">
+  Number of records to skip (for pagination)
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl "https://api.palm.com/v1/profiles/prof_123/stakeholders/owners?type=INDIVIDUAL&status=ACTIVE" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const owners = await palm.stakeholders.owners.list('prof_123', {
+  type: 'INDIVIDUAL',
+  status: 'ACTIVE',
+  limit: 20,
+  offset: 0
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+owners = palm.stakeholders.owners.list(
+    profile_id="prof_123",
+    type="INDIVIDUAL",
+    status="ACTIVE",
+    limit=20,
+    offset=0
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">

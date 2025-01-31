@@ -1,0 +1,174 @@
+---
+title: 'Get Owner'
+description: 'Retrieve details of a specific owner'
+api: 'GET /v1/profiles/{profileId}/stakeholders/owners/{ownerId}'
+---
+
+Retrieve detailed information about a specific owner, including their ownership details and verification status.
+
+### Path Parameters
+
+<ParamField path="profileId" type="string" required>
+  ID of the business profile
+</ParamField>
+
+<ParamField path="ownerId" type="string" required>
+  ID of the owner to retrieve
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="include" type="string">
+  Additional related data to include (e.g., "verificationHistory,documents")
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl "https://api.palm.com/v1/profiles/prof_123/stakeholders/owners/own_123abc" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const owner = await palm.stakeholders.owners.get('prof_123', 'own_123abc', {
+  include: 'verificationHistory,documents'
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+owner = palm.stakeholders.owners.get(
+    profile_id="prof_123",
+    owner_id="own_123abc",
+    include=["verificationHistory", "documents"]
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Owner object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the owner
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Type of owner (INDIVIDUAL/ENTITY)
+    </ResponseField>
+    <ResponseField name="ownershipDetails" type="object">
+      <Expandable title="properties">
+        <ResponseField name="percentage" type="number">
+          Ownership percentage
+        </ResponseField>
+        <ResponseField name="type" type="string">
+          Type of ownership
+        </ResponseField>
+        <ResponseField name="isBeneficialOwner" type="boolean">
+          Beneficial owner status
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="individual" type="object">
+      Individual's personal information
+    </ResponseField>
+    <ResponseField name="verificationStatus" type="object">
+      Current verification details
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "own_123abc",
+    "type": "INDIVIDUAL",
+    "ownershipDetails": {
+      "percentage": 51.5,
+      "type": "DIRECT",
+      "isBeneficialOwner": true
+    },
+    "individual": {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "dateOfBirth": "1980-01-15",
+      "address": {
+        "line1": "123 Main St",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105"
+      }
+    },
+    "verificationStatus": {
+      "status": "VERIFIED",
+      "lastVerified": "2024-01-30T12:00:00Z",
+      "method": "DOCUMENT",
+      "documents": [
+        {
+          "type": "ID_VERIFICATION",
+          "status": "VERIFIED",
+          "verifiedAt": "2024-01-30T12:00:00Z"
+        }
+      ]
+    },
+    "metadata": {
+      "createdAt": "2024-01-30T10:00:00Z",
+      "updatedAt": "2024-01-30T12:00:00Z"
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 404 Not Found
+{
+  "success": false,
+  "error": {
+    "code": "OWNER_NOT_FOUND",
+    "message": "Owner not found",
+    "details": {
+      "ownerId": "own_123abc"
+    }
+  }
+}
+```
+
+```json 403 Forbidden
+{
+  "success": false,
+  "error": {
+    "code": "PERMISSION_DENIED",
+    "message": "Insufficient permissions to view this owner",
+    "details": {
+      "requiredRole": "OWNER_VIEWER"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Related Endpoints
+
+<Card title="Update Owner" icon="pen" href="/api-reference/stakeholders/update-owner">
+  Update the owner's information
+</Card>
+
+<Card title="List Documents" icon="files" href="/api-reference/stakeholders/list-owner-documents">
+  View documents associated with this owner
+</Card>
