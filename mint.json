@@ -53,95 +53,90 @@
       "group": "API Reference",
       "pages": [
         {
-          "group": "Forms",
+          "group": "Forms Core",
           "pages": [
             "api-reference/forms/overview",
-            {
-              "group": "Core Form Management",
-              "pages": [
-                "api-reference/forms/core/create",
-                "api-reference/forms/core/retrieve",
-                "api-reference/forms/core/update",
-                "api-reference/forms/core/delete",
-                "api-reference/forms/core/publish",
-                "api-reference/forms/core/bulk-operations"
-              ]
-            },
-            {
-              "group": "AI Form Building",
-              "pages": [
-                "api-reference/forms/ai/generate-form",
-                "api-reference/forms/ai/optimize-layout",
-                "api-reference/forms/ai/suggest-fields",
-                "api-reference/forms/ai/improve-ux",
-                "api-reference/forms/ai/validation-rules"
-              ]
-            },
-            {
-              "group": "Form Building",
-              "pages": [
-                "api-reference/forms/building/templates",
-                "api-reference/forms/building/steps",
-                "api-reference/forms/building/fields",
-                "api-reference/forms/building/validation",
-                "api-reference/forms/building/layout"
-              ]
-            },
-            {
-              "group": "AI Processing",
-              "pages": [
-                "api-reference/forms/processing/extract-data",
-                "api-reference/forms/processing/analyze-documents",
-                "api-reference/forms/processing/validate-inputs",
-                "api-reference/forms/processing/auto-complete",
-                "api-reference/forms/processing/smart-routing"
-              ]
-            },
-            {
-              "group": "Form Logic",
-              "pages": [
-                "api-reference/forms/logic/conditions",
-                "api-reference/forms/logic/workflows",
-                "api-reference/forms/logic/computations",
-                "api-reference/forms/logic/triggers"
-              ]
-            },
-            {
-              "group": "Responses",
-              "pages": [
-                "api-reference/forms/responses/submit",
-                "api-reference/forms/responses/retrieve",
-                "api-reference/forms/responses/export",
-                "api-reference/forms/responses/bulk-operations"
-              ]
-            },
-            {
-              "group": "AI Analytics",
-              "pages": [
-                "api-reference/forms/ai-analytics/user-behavior",
-                "api-reference/forms/ai-analytics/completion-prediction",
-                "api-reference/forms/ai-analytics/drop-off-analysis",
-                "api-reference/forms/ai-analytics/improvement-suggestions"
-              ]
-            },
-            {
-              "group": "Form Data Models",
-              "pages": [
-                "api-reference/forms/models/field-types",
-                "api-reference/forms/models/validation-rules",
-                "api-reference/forms/models/computation-rules",
-                "api-reference/forms/models/workflow-states"
-              ]
-            },
-            {
-              "group": "Schema Integration",
-              "pages": [
-                "api-reference/forms/schema/map-fields",
-                "api-reference/forms/schema/auto-populate",
-                "api-reference/forms/schema/sync-models",
-                "api-reference/forms/schema/transform"
-              ]
-            }
+            "api-reference/forms/core/create",
+            "api-reference/forms/core/retrieve",
+            "api-reference/forms/core/update",
+            "api-reference/forms/core/delete",
+            "api-reference/forms/core/publish",
+            "api-reference/forms/core/bulk-operations"
+          ]
+        },
+        {
+          "group": "Forms AI",
+          "pages": [
+            "api-reference/forms/ai/generate-form",
+            "api-reference/forms/ai/optimize-layout",
+            "api-reference/forms/ai/suggest-fields",
+            "api-reference/forms/ai/improve-ux",
+            "api-reference/forms/ai/validation-rules"
+          ]
+        },
+        {
+          "group": "Forms Building",
+          "pages": [
+            "api-reference/forms/building/templates",
+            "api-reference/forms/building/steps",
+            "api-reference/forms/building/fields",
+            "api-reference/forms/building/validation",
+            "api-reference/forms/building/layout"
+          ]
+        },
+        {
+          "group": "Forms Processing",
+          "pages": [
+            "api-reference/forms/processing/extract-data",
+            "api-reference/forms/processing/analyze-documents",
+            "api-reference/forms/processing/validate-inputs",
+            "api-reference/forms/processing/auto-complete",
+            "api-reference/forms/processing/smart-routing"
+          ]
+        },
+        {
+          "group": "Forms Logic",
+          "pages": [
+            "api-reference/forms/logic/conditions",
+            "api-reference/forms/logic/workflows",
+            "api-reference/forms/logic/computations",
+            "api-reference/forms/logic/triggers"
+          ]
+        },
+        {
+          "group": "Forms Responses",
+          "pages": [
+            "api-reference/forms/responses/submit",
+            "api-reference/forms/responses/retrieve",
+            "api-reference/forms/responses/export",
+            "api-reference/forms/responses/bulk-operations"
+          ]
+        },
+        {
+          "group": "Forms AI Analytics",
+          "pages": [
+            "api-reference/forms/ai-analytics/user-behavior",
+            "api-reference/forms/ai-analytics/completion-prediction",
+            "api-reference/forms/ai-analytics/drop-off-analysis",
+            "api-reference/forms/ai-analytics/improvement-suggestions"
+          ]
+        },
+        {
+          "group": "Forms Data Models",
+          "pages": [
+            "api-reference/forms/models/field-types",
+            "api-reference/forms/models/validation-rules",
+            "api-reference/forms/models/computation-rules",
+            "api-reference/forms/models/workflow-states"
+          ]
+        },
+        {
+          "group": "Forms Schema Integration",
+          "pages": [
+            "api-reference/forms/schema/map-fields",
+            "api-reference/forms/schema/auto-populate",
+            "api-reference/forms/schema/sync-models",
+            "api-reference/forms/schema/transform"
           ]
         },
         {
