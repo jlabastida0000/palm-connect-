@@ -7,7 +7,7 @@
   "favicon": "https://userimg-assets.customeriomail.com/images/client-env-146826/1709917742066_palmicon_01HRFGM9QX34H6SRVP6DAEW4GS.png",
   "colors": {
     "primary": "#7BEA4D",
-    "light": "#55D799", 
+    "light": "#55D799",
     "dark": "#1F3B33",
     "background": {
       "dark": "#121212"
@@ -53,6 +53,224 @@
       "group": "API Reference",
       "pages": [
         {
+          "group": "Forms",
+          "pages": [
+            "api-reference/forms/overview",
+            {
+              "group": "Core Form Management",
+              "pages": [
+                "api-reference/forms/core/create",
+                "api-reference/forms/core/retrieve",
+                "api-reference/forms/core/update",
+                "api-reference/forms/core/delete",
+                "api-reference/forms/core/publish",
+                "api-reference/forms/core/bulk-operations"
+              ]
+            },
+            {
+              "group": "AI Form Building",
+              "pages": [
+                "api-reference/forms/ai/generate-form",
+                "api-reference/forms/ai/optimize-layout",
+                "api-reference/forms/ai/suggest-fields",
+                "api-reference/forms/ai/improve-ux",
+                "api-reference/forms/ai/validation-rules"
+              ]
+            },
+            {
+              "group": "Form Building",
+              "pages": [
+                "api-reference/forms/building/templates",
+                "api-reference/forms/building/steps",
+                "api-reference/forms/building/fields",
+                "api-reference/forms/building/validation",
+                "api-reference/forms/building/layout"
+              ]
+            },
+            {
+              "group": "AI Processing",
+              "pages": [
+                "api-reference/forms/processing/extract-data",
+                "api-reference/forms/processing/analyze-documents",
+                "api-reference/forms/processing/validate-inputs",
+                "api-reference/forms/processing/auto-complete",
+                "api-reference/forms/processing/smart-routing"
+              ]
+            },
+            {
+              "group": "Form Logic",
+              "pages": [
+                "api-reference/forms/logic/conditions",
+                "api-reference/forms/logic/workflows",
+                "api-reference/forms/logic/computations",
+                "api-reference/forms/logic/triggers"
+              ]
+            },
+            {
+              "group": "Responses",
+              "pages": [
+                "api-reference/forms/responses/submit",
+                "api-reference/forms/responses/retrieve",
+                "api-reference/forms/responses/export",
+                "api-reference/forms/responses/bulk-operations"
+              ]
+            },
+            {
+              "group": "AI Analytics",
+              "pages": [
+                "api-reference/forms/ai-analytics/user-behavior",
+                "api-reference/forms/ai-analytics/completion-prediction",
+                "api-reference/forms/ai-analytics/drop-off-analysis",
+                "api-reference/forms/ai-analytics/improvement-suggestions"
+              ]
+            },
+            {
+              "group": "Form Data Models",
+              "pages": [
+                "api-reference/forms/models/field-types",
+                "api-reference/forms/models/validation-rules",
+                "api-reference/forms/models/computation-rules",
+                "api-reference/forms/models/workflow-states"
+              ]
+            },
+            {
+              "group": "Schema Integration",
+              "pages": [
+                "api-reference/forms/schema/map-fields",
+                "api-reference/forms/schema/auto-populate",
+                "api-reference/forms/schema/sync-models",
+                "api-reference/forms/schema/transform"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Data Models & Schema",
+          "pages": [
+            "api-reference/models/overview",
+            {
+              "group": "Schema Management",
+              "pages": [
+                "api-reference/models/schema/create",
+                "api-reference/models/schema/validate",
+                "api-reference/models/schema/version",
+                "api-reference/models/schema/migrate"
+              ]
+            },
+            {
+              "group": "Intelligent Schema",
+              "pages": [
+                "api-reference/models/inference/detect",
+                "api-reference/models/inference/suggest",
+                "api-reference/models/inference/enhance",
+                "api-reference/models/inference/validate"
+              ]
+            },
+            {
+              "group": "Data Extraction",
+              "pages": [
+                "api-reference/models/extraction/documents",
+                "api-reference/models/extraction/tables",
+                "api-reference/models/extraction/structured",
+                "api-reference/models/extraction/unstructured"
+              ]
+            },
+            {
+              "group": "Schema Mapping",
+              "pages": [
+                "api-reference/models/mapping/create",
+                "api-reference/models/mapping/transform",
+                "api-reference/models/mapping/validate",
+                "api-reference/models/mapping/sync"
+              ]
+            },
+            {
+              "group": "Data Sources",
+              "pages": [
+                "api-reference/models/sources/databases",
+                "api-reference/models/sources/apis",
+                "api-reference/models/sources/files",
+                "api-reference/models/sources/streams"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Data Processing",
+          "pages": [
+            "api-reference/processing/overview",
+            {
+              "group": "Inference Engine",
+              "pages": [
+                "api-reference/processing/inference/schema-detection",
+                "api-reference/processing/inference/type-inference",
+                "api-reference/processing/inference/relationship-detection",
+                "api-reference/processing/inference/constraint-discovery"
+              ]
+            },
+            {
+              "group": "Data Transformation",
+              "pages": [
+                "api-reference/processing/transform/clean",
+                "api-reference/processing/transform/normalize",
+                "api-reference/processing/transform/enrich",
+                "api-reference/processing/transform/validate"
+              ]
+            },
+            {
+              "group": "Data Quality",
+              "pages": [
+                "api-reference/processing/quality/validate",
+                "api-reference/processing/quality/profile",
+                "api-reference/processing/quality/monitor",
+                "api-reference/processing/quality/alerts"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "AI & Intelligence",
+          "pages": [
+            "api-reference/ai/overview",
+            {
+              "group": "Document Processing",
+              "pages": [
+                "api-reference/ai/documents/extract",
+                "api-reference/ai/documents/classify",
+                "api-reference/ai/documents/validate",
+                "api-reference/ai/documents/enhance"
+              ]
+            },
+            {
+              "group": "Form Generation",
+              "pages": [
+                "api-reference/ai/generation/create-form",
+                "api-reference/ai/generation/optimize",
+                "api-reference/ai/generation/customize",
+                "api-reference/ai/generation/iterate"
+              ]
+            },
+            {
+              "group": "Workflow Automation",
+              "pages": [
+                "api-reference/ai/workflows/design",
+                "api-reference/ai/workflows/optimize",
+                "api-reference/ai/workflows/predict",
+                "api-reference/ai/workflows/adapt"
+              ]
+            },
+            {
+              "group": "Analytics & Insights",
+              "pages": [
+                "api-reference/ai/analytics/analyze",
+                "api-reference/ai/analytics/predict",
+                "api-reference/ai/analytics/recommend",
+                "api-reference/ai/analytics/optimize"
+              ]
+            }
+          ]
+        },
+        {
           "group": "Authentication",
           "pages": [
             "api-reference/authentication/overview"
@@ -78,7 +296,7 @@
             "api-reference/documents/overview",
             "api-reference/documents/uploadDocument",
             "api-reference/documents/getDocument",
-            "api-reference/documents/listDocuments" 
+            "api-reference/documents/listDocuments"
           ]
         },
         {
@@ -113,11 +331,30 @@
       ]
     },
     {
+      "group": "Enterprise",
+      "pages": [
+        "enterprise/deployment",
+        "enterprise/security",
+        "enterprise/compliance",
+        "enterprise/sso"
+      ]
+    },
+    {
       "group": "Guides",
       "pages": [
         "guides/business-verification",
         "guides/compliance-tracking",
-        "guides/webhook-integration"
+        "guides/webhook-integration",
+        "guides/ai-form-building",
+        "guides/intelligent-workflows",
+        "guides/document-processing",
+        "guides/schema-inference",
+        "guides/data-extraction",
+        "guides/model-mapping",
+        "guides/data-quality",
+        "guides/integrations/database-integration",
+        "guides/integrations/api-integration",
+        "guides/integrations/custom-data-sources"
       ]
     },
     {
@@ -125,7 +362,8 @@
       "pages": [
         "sdks/node",
         "sdks/python",
-        "sdks/postman"
+        "sdks/postman",
+        "sdks/ai-tools"
       ]
     },
     {
