@@ -58,6 +58,7 @@
             "api-reference/forms/overview",
             "api-reference/forms/core/create",
             "api-reference/forms/core/retrieve",
+            "api-reference/forms/core/list",
             "api-reference/forms/core/update",
             "api-reference/forms/core/delete",
             "api-reference/forms/core/publish",
