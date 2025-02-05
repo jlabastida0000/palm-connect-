@@ -1,0 +1,280 @@
+---
+title: 'Form Templates'
+description: 'Manage form templates and reusable components'
+api: 'POST /v1/forms/templates'
+---
+
+Create and manage form templates that can be reused across multiple forms.
+
+### Create Template
+
+<ParamField body="name" type="string" required>
+  Template name
+</ParamField>
+
+<ParamField body="description" type="string">
+  Template description
+</ParamField>
+
+<ParamField body="structure" type="object" required>
+  <Expandable title="Template structure">
+    <ParamField body="steps" type="array">
+      Array of form steps
+    </ParamField>
+    <ParamField body="fields" type="array">
+      Array of field definitions
+    </ParamField>
+    <ParamField body="layout" type="object">
+      Layout configuration
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/templates" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Customer Registration",
+    "description": "Standard customer registration template",
+    "structure": {
+      "steps": [
+        {
+          "title": "Basic Information",
+          "fields": [
+            {
+              "type": "text",
+              "label": "Full Name",
+              "required": true
+            },
+            {
+              "type": "email",
+              "label": "Email Address",
+              "required": true
+            }
+          ]
+        },
+        {
+          "title": "Company Details",
+          "fields": [
+            {
+              "type": "text",
+              "label": "Company Name",
+              "required": true
+            },
+            {
+              "type": "select",
+              "label": "Industry",
+              "options": [
+                {"label": "Technology", "value": "tech"},
+                {"label": "Healthcare", "value": "health"},
+                {"label": "Finance", "value": "finance"}
+              ]
+            }
+          ]
+        }
+      ],
+      "layout": {
+        "type": "wizard",
+        "progress_bar": true
+      }
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const template = await palm.forms.templates.create({
+  name: 'Customer Registration',
+  description: 'Standard customer registration template',
+  structure: {
+    steps: [
+      {
+        title: 'Basic Information',
+        fields: [
+          {
+            type: 'text',
+            label: 'Full Name',
+            required: true
+          },
+          {
+            type: 'email',
+            label: 'Email Address',
+            required: true
+          }
+        ]
+      },
+      {
+        title: 'Company Details',
+        fields: [
+          {
+            type: 'text',
+            label: 'Company Name',
+            required: true
+          },
+          {
+            type: 'select',
+            label: 'Industry',
+            options: [
+              {label: 'Technology', value: 'tech'},
+              {label: 'Healthcare', value: 'health'},
+              {label: 'Finance', value: 'finance'}
+            ]
+          }
+        ]
+      }
+    ],
+    layout: {
+      type: 'wizard',
+      progress_bar: true
+    }
+  }
+});
+```
+</CodeGroup>
+
+### Other Template Operations
+
+```mdx
+GET /v1/forms/templates
+Get list of available templates
+
+GET /v1/forms/templates/{templateId}
+Get template details
+
+PUT /v1/forms/templates/{templateId}
+Update template
+
+DELETE /v1/forms/templates/{templateId}
+Delete template
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Template object">
+    <ResponseField name="id" type="string">
+      Template ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Template name
+    </ResponseField>
+    <ResponseField name="structure" type="object">
+      Template structure
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "template_abc123",
+    "name": "Customer Registration",
+    "description": "Standard customer registration template",
+    "structure": {
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Basic Information",
+          "fields": [
+            {
+              "id": "field_name",
+              "type": "text",
+              "label": "Full Name",
+              "required": true
+            },
+            {
+              "id": "field_email",
+              "type": "email",
+              "label": "Email Address",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "step_2",
+          "title": "Company Details",
+          "fields": [
+            {
+              "id": "field_company",
+              "type": "text",
+              "label": "Company Name",
+              "required": true
+            },
+            {
+              "id": "field_industry",
+              "type": "select",
+              "label": "Industry",
+              "options": [
+                {"label": "Technology", "value": "tech"},
+                {"label": "Healthcare", "value": "health"},
+                {"label": "Finance", "value": "finance"}
+              ]
+            }
+          ]
+        }
+      ],
+      "layout": {
+        "type": "wizard",
+        "progress_bar": true
+      }
+    },
+    "created_at": "2024-03-20T10:30:00Z",
+    "updated_at": "2024-03-20T10:30:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_TEMPLATE",
+    "message": "Invalid template structure",
+    "details": {
+      "field": "structure.steps",
+      "error": "At least one step is required"
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "TEMPLATE_EXISTS",
+    "message": "Template with this name already exists",
+    "details": {
+      "template_name": "Customer Registration"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Create Form" icon="plus" href="/api-reference/forms/core/create">
+  Create a form using this template
+</Card>
+
+<Card title="Customize Steps" icon="pencil" href="/api-reference/forms/building/steps">
+  Customize template steps
+</Card>
