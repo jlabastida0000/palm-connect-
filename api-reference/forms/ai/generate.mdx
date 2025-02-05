@@ -1,0 +1,230 @@
+
+---
+title: 'Generate Form'
+description: 'Automatically generate a form using AI'
+api: 'POST /v1/forms/ai/generate'
+---
+
+Generate a complete form structure including fields, validation, and layout using AI based on requirements or existing data.
+
+### Request Body
+
+<ParamField body="input" type="object" required>
+  <Expandable title="Input configuration">
+    <ParamField body="type" type="string" required>
+      Input type ('requirements', 'schema', 'document')
+    </ParamField>
+    <ParamField body="content" type="string">
+      Requirements text or schema definition
+    </ParamField>
+    <ParamField body="document" type="object">
+      Document to analyze for form generation
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="options" type="object">
+  <Expandable title="Generation options">
+    <ParamField body="style" type="string">
+      Form style ('simple', 'advanced', 'wizard')
+    </ParamField>
+    <ParamField body="validation_level" type="string">
+      Validation strictness ('basic', 'strict')
+    </ParamField>
+    <ParamField body="include_analytics" type="boolean">
+      Add analytics tracking
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/ai/generate" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": {
+      "type": "requirements",
+      "content": "Create a customer onboarding form that collects name, email, company details, and business requirements. Include validation for email and required fields."
+    },
+    "options": {
+      "style": "wizard",
+      "validation_level": "strict",
+      "include_analytics": true
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const form = await palm.forms.generate({
+  input: {
+    type: 'requirements',
+    content: 'Create a customer onboarding form...'
+  },
+  options: {
+    style: 'wizard',
+    validation_level: 'strict',
+    include_analytics: true
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+form = palm.forms.generate(
+    input={
+        'type': 'requirements',
+        'content': 'Create a customer onboarding form...'
+    },
+    options={
+        'style': 'wizard',
+        'validation_level': 'strict',
+        'include_analytics': True
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the form generation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Form object">
+    <ResponseField name="id" type="string">
+      Generated form ID
+    </ResponseField>
+    <ResponseField name="structure" type="object">
+      Complete form structure
+    </ResponseField>
+    <ResponseField name="analytics" type="object">
+      Analytics configuration if requested
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "form_abc123",
+    "structure": {
+      "steps": [
+        {
+          "id": "personal_info",
+          "title": "Personal Information",
+          "fields": [
+            {
+              "id": "name",
+              "type": "text",
+              "label": "Full Name",
+              "required": true,
+              "validation": {
+                "min_length": 2
+              }
+            },
+            {
+              "id": "email",
+              "type": "email",
+              "label": "Email Address",
+              "required": true,
+              "validation": {
+                "format": "email"
+              }
+            }
+          ]
+        },
+        {
+          "id": "company_info",
+          "title": "Company Details",
+          "fields": [
+            {
+              "id": "company_name",
+              "type": "text",
+              "label": "Company Name",
+              "required": true
+            },
+            {
+              "id": "industry",
+              "type": "select",
+              "label": "Industry",
+              "options": [
+                {"label": "Technology", "value": "tech"},
+                {"label": "Finance", "value": "finance"},
+                {"label": "Healthcare", "value": "healthcare"}
+              ]
+            }
+          ]
+        }
+      ],
+      "validation": {
+        "rules": [
+          {
+            "type": "required_fields",
+            "fields": ["name", "email", "company_name"]
+          }
+        ]
+      },
+      "analytics": {
+        "enabled": true,
+        "track_fields": ["email", "industry"],
+        "track_completion": true
+      }
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REQUIREMENTS",
+    "message": "Unable to parse requirements",
+    "details": {
+      "reason": "Requirements too vague"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "GENERATION_FAILED",
+    "message": "Form generation failed",
+    "details": {
+      "reason": "Unable to determine field types"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Customize Form" icon="pen" href="/api-reference/forms/core/update">
+  Customize the generated form structure
+</Card>
+
+<Card title="Add Logic" icon="code" href="/api-reference/forms/logic/conditions">
+  Add custom logic and conditions
+</Card>
+```
