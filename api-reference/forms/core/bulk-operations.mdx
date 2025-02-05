@@ -1,0 +1,234 @@
+---
+title: 'Bulk Operations'
+description: 'Perform operations on multiple forms'
+api: 'POST /v1/forms/bulk/{operation}'
+---
+
+Perform operations on multiple forms simultaneously for efficient batch processing.
+
+### Path Parameters
+
+<ParamField path="operation" type="string" required>
+  Type of bulk operation ('update', 'delete', 'publish', 'archive')
+</ParamField>
+
+### Request Body
+
+<ParamField body="form_ids" type="array" required>
+  Array of form IDs to operate on
+</ParamField>
+
+<ParamField body="options" type="object">
+  <Expandable title="Operation options">
+    <ParamField body="force" type="boolean">
+      Force the operation
+    </ParamField>
+    <ParamField body="async" type="boolean">
+      Run operation asynchronously
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="data" type="object">
+  Data specific to the operation type
+</ParamField>
+
+### Supported Operations
+
+- **update**: Update multiple forms with the same changes
+- **delete**: Delete multiple forms
+- **publish**: Publish multiple forms
+- **archive**: Archive multiple forms
+- **export**: Export multiple forms and their data
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+# Bulk update forms
+curl -X POST "https://api.palm.com/v1/forms/bulk/update" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "form_ids": ["form_123", "form_456", "form_789"],
+    "data": {
+      "settings": {
+        "analytics_enabled": true
+      }
+    }
+  }'
+
+# Bulk delete forms
+curl -X POST "https://api.palm.com/v1/forms/bulk/delete" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "form_ids": ["form_123", "form_456"],
+    "options": {
+      "force": true
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+// Bulk update forms
+const updateResult = await palm.forms.bulkUpdate({
+  form_ids: ['form_123', 'form_456', 'form_789'],
+  data: {
+    settings: {
+      analytics_enabled: true
+    }
+  }
+});
+
+// Bulk delete forms
+const deleteResult = await palm.forms.bulkDelete({
+  form_ids: ['form_123', 'form_456'],
+  options: {
+    force: true
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+# Bulk update forms
+update_result = palm.forms.bulk_update(
+    form_ids=['form_123', 'form_456', 'form_789'],
+    data={
+        'settings': {
+            'analytics_enabled': True
+        }
+    }
+)
+
+# Bulk delete forms
+delete_result = palm.forms.bulk_delete(
+    form_ids=['form_123', 'form_456'],
+    options={
+        'force': True
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the bulk operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Operation results">
+    <ResponseField name="successful" type="array">
+      IDs of successfully processed forms
+    </ResponseField>
+    <ResponseField name="failed" type="array">
+      Details of failed operations
+    </ResponseField>
+    <ResponseField name="job_id" type="string">
+      ID for tracking async operations
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "successful": [
+      {
+        "form_id": "form_123",
+        "status": "completed"
+      },
+      {
+        "form_id": "form_456",
+        "status": "completed"
+      }
+    ],
+    "failed": [
+      {
+        "form_id": "form_789",
+        "error": {
+          "code": "FORM_LOCKED",
+          "message": "Form is locked for editing"
+        }
+      }
+    ],
+    "summary": {
+      "total": 3,
+      "successful": 2,
+      "failed": 1
+    },
+    "job_id": "job_xyz789"
+  }
+}
+```
+
+### Async Operations
+
+For long-running bulk operations, use the async option:
+
+1. Submit the bulk operation with `"async": true`
+2. Receive a job ID in the response
+3. Poll the job status endpoint to track progress
+
+```bash
+# Check job status
+curl "https://api.palm.com/v1/jobs/job_xyz789" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Invalid bulk operation parameters",
+    "details": {
+      "form_ids": "Required field"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "OPERATION_FAILED",
+    "message": "Bulk operation failed",
+    "details": {
+      "failed_forms": [
+        {
+          "form_id": "form_789",
+          "reason": "Form is locked"
+        }
+      ]
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Track Jobs" icon="clock" href="/api-reference/jobs/status">
+  Monitor async job status
+</Card>
+
+<Card title="View Results" icon="list" href="/api-reference/jobs/results">
+  Get detailed operation results
+</Card>

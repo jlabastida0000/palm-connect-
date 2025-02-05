@@ -1,0 +1,167 @@
+---
+title: 'Publish Form'
+description: 'Publish a form to make it live'
+api: 'POST /v1/forms/{formId}/publish'
+---
+
+Publish a form to make it available for submissions. Publishing a form freezes its current configuration and creates a new version.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to publish
+</ParamField>
+
+### Request Body
+
+<ParamField body="version" type="string">
+  Version name/number for this publication
+</ParamField>
+
+<ParamField body="settings" type="object">
+  <Expandable title="Publication settings">
+    <ParamField body="start_date" type="string">
+      When to make the form available (ISO 8601)
+    </ParamField>
+    <ParamField body="end_date" type="string">
+      When to close the form (ISO 8601)
+    </ParamField>
+    <ParamField body="max_submissions" type="number">
+      Maximum number of submissions to accept
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/publish" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "version": "1.0.0",
+    "settings": {
+      "start_date": "2024-03-21T00:00:00Z",
+      "end_date": "2024-04-21T00:00:00Z",
+      "max_submissions": 1000
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const published = await palm.forms.publish('form_abc123', {
+  version: '1.0.0',
+  settings: {
+    start_date: '2024-03-21T00:00:00Z',
+    end_date: '2024-04-21T00:00:00Z',
+    max_submissions: 1000
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+published = palm.forms.publish(
+    'form_abc123',
+    version='1.0.0',
+    settings={
+        'start_date': '2024-03-21T00:00:00Z',
+        'end_date': '2024-04-21T00:00:00Z',
+        'max_submissions': 1000
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the form was published successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Publication details">
+    <ResponseField name="version" type="string">
+      Published version
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Publication status
+    </ResponseField>
+    <ResponseField name="url" type="string">
+      Public form URL
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "form_id": "form_abc123",
+    "version": "1.0.0",
+    "status": "published",
+    "url": "https://forms.palm.com/f/abc123",
+    "settings": {
+      "start_date": "2024-03-21T00:00:00Z",
+      "end_date": "2024-04-21T00:00:00Z",
+      "max_submissions": 1000
+    },
+    "published_at": "2024-03-20T16:30:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FORM",
+    "message": "Form validation failed",
+    "details": {
+      "errors": [
+        {
+          "field": "email",
+          "error": "Missing validation rules"
+        }
+      ]
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "ALREADY_PUBLISHED",
+    "message": "Form is already published",
+    "details": {
+      "current_version": "1.0.0"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Track Analytics" icon="chart-line" href="/api-reference/forms/analytics/overview">
+  Monitor form performance
+</Card>
+
+<Card title="Manage Responses" icon="inbox" href="/api-reference/forms/responses/list">
+  View form submissions
+</Card>
