@@ -1,5 +1,170 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Submit Response'
+description: 'Submit a form response'
+api: 'POST /v1/forms/{formId}/responses'
 ---
 
+Submit a new response to a form, including field values and attachments.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to submit response to
+</ParamField>
+
+### Request Body
+
+<ParamField body="values" type="object" required>
+  Key-value pairs of field responses
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Additional submission metadata
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/responses" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "values": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "company": "Acme Inc"
+    },
+    "metadata": {
+      "user_agent": "Mozilla/5.0...",
+      "ip_address": "192.168.1.1"
+    }
+  }'
+
+```
+
+```tsx
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const response = await palm.forms.responses.submit('form_abc123', {
+  values: {
+    name: "John Doe",
+    email: "john@example.com",
+    company: "Acme Inc"
+  },
+  metadata: {
+    user_agent: "Mozilla/5.0...",
+    ip_address: "192.168.1.1"
+  }
+});
+
+```
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "response_id": "resp_abc123",
+    "form_id": "form_abc123",
+    "values": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "company": "Acme Inc"
+    },
+    "metadata": {
+      "submitted_at": "2024-03-20T10:30:00Z",
+      "user_agent": "Mozilla/5.0...",
+      "ip_address": "192.168.1.1"
+    },
+    "status": "completed"
+  }
+}
+
+```
+
+```
+
+---
+
+**File: `api-reference/forms/responses/retrieve.mdx`**
+
+```mdx
+---
+title: 'Retrieve Responses'
+description: 'Get form responses'
+api: 'GET /v1/forms/{formId}/responses'
+---
+
+Retrieve responses for a form with filtering and pagination options.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to get responses from
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page" type="number">
+  Page number for pagination
+</ParamField>
+
+<ParamField query="limit" type="number">
+  Number of responses per page
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by response status
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl "https://api.palm.com/v1/forms/form_abc123/responses?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+```
+
+```tsx
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const responses = await palm.forms.responses.list('form_abc123', {
+  page: 1,
+  limit: 10,
+  status: 'completed'
+});
+
+```
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "responses": [
+      {
+        "response_id": "resp_abc123",
+        "values": {
+          "name": "John Doe",
+          "email": "john@example.com"
+        },
+        "submitted_at": "2024-03-20T10:30:00Z"
+      }
+    ],
+    "pagination": {
+      "total": 45,
+      "page": 1,
+      "pages": 5
+    }
+  }
+}
+
+```
