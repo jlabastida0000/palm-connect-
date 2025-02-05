@@ -1,5 +1,72 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Export Responses'
+description: 'Export form responses in various formats'
+api: 'POST /v1/forms/{formId}/responses/export'
 ---
 
+Export form responses in various formats (CSV, JSON, Excel) with customizable options.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to export responses from
+</ParamField>
+
+### Request Body
+
+<ParamField body="format" type="string" required>
+  Export format ('csv', 'json', 'excel')
+</ParamField>
+
+<ParamField body="filters" type="object">
+  Response filters to apply
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/responses/export" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "format": "csv",
+    "filters": {
+      "date_range": {
+        "start": "2024-01-01",
+        "end": "2024-03-20"
+      }
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const export = await palm.forms.responses.export('form_abc123', {
+  format: 'csv',
+  filters: {
+    date_range: {
+      start: '2024-01-01',
+      end: '2024-03-20'
+    }
+  }
+});
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "export_id": "export_abc123",
+    "status": "processing",
+    "download_url": "https://api.palm.com/exports/abc123.csv",
+    "expires_at": "2024-03-21T10:30:00Z"
+  }
+}
+```

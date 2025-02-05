@@ -1,5 +1,115 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Bulk Response Operations'
+description: 'Perform operations on multiple responses'
+api: 'POST /v1/forms/{formId}/responses/bulk'
 ---
 
+Perform bulk operations on form responses such as delete, update, or export multiple responses.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form
+</ParamField>
+
+### Request Body
+
+<ParamField body="operation" type="string" required>
+  Operation type ('delete', 'update', 'export')
+</ParamField>
+
+<ParamField body="response_ids" type="array" required>
+  Array of response IDs to operate on
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/responses/bulk" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operation": "delete",
+    "response_ids": ["resp_123", "resp_456", "resp_789"],
+    "options": {
+      "permanent": true
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const result = await palm.forms.responses.bulkOperation('form_abc123', {
+  operation: 'delete',
+  response_ids: ['resp_123', 'resp_456', 'resp_789'],
+  options: {
+    permanent: true
+  }
+});
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "operation": "delete",
+    "results": {
+      "successful": ["resp_123", "resp_456"],
+      "failed": [
+        {
+          "id": "resp_789",
+          "error": "Response locked"
+        }
+      ]
+    },
+    "summary": {
+      "total": 3,
+      "successful": 2,
+      "failed": 1
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_OPERATION",
+    "message": "Invalid bulk operation",
+    "details": {
+      "operation": "unknown_operation"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "OPERATION_FAILED",
+    "message": "Bulk operation failed",
+    "details": {
+      "failed_responses": [
+        {
+          "id": "resp_789",
+          "reason": "Response locked"
+        }
+      ]
+    }
+  }
+}
+```
+</CodeGroup>
+```
