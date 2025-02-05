@@ -1,0 +1,214 @@
+---
+title: 'Detect Schema'
+description: 'Automatically detect and infer schema from data sources'
+api: 'POST /v1/models/inference/detect'
+---
+
+Analyze data sources to automatically detect and infer schema structure, data types, and relationships.
+
+### Request Body
+
+<ParamField body="source" type="object" required>
+  <Expandable title="Source configuration">
+    <ParamField body="type" type="string" required>
+      Type of data source ('file', 'database', 'api')
+    </ParamField>
+    <ParamField body="format" type="string">
+      Data format for files ('csv', 'json', 'excel')
+    </ParamField>
+    <ParamField body="connection" type="object">
+      Connection details for databases/APIs
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="options" type="object">
+  <Expandable title="Inference options">
+    <ParamField body="sample_size" type="number">
+      Number of records to analyze (default: 1000)
+    </ParamField>
+    <ParamField body="confidence_threshold" type="number">
+      Minimum confidence score for type inference (0-1)
+    </ParamField>
+    <ParamField body="detect_relationships" type="boolean">
+      Attempt to detect relationships between fields
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/models/inference/detect" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": {
+      "type": "file",
+      "format": "csv",
+      "url": "https://example.com/data.csv"
+    },
+    "options": {
+      "sample_size": 1000,
+      "confidence_threshold": 0.8,
+      "detect_relationships": true
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const schema = await palm.models.detectSchema({
+  source: {
+    type: 'file',
+    format: 'csv',
+    url: 'https://example.com/data.csv'
+  },
+  options: {
+    sample_size: 1000,
+    confidence_threshold: 0.8,
+    detect_relationships: true
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+schema = palm.models.detect_schema(
+    source={
+        'type': 'file',
+        'format': 'csv',
+        'url': 'https://example.com/data.csv'
+    },
+    options={
+        'sample_size': 1000,
+        'confidence_threshold': 0.8,
+        'detect_relationships': True
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the schema detection was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Schema object">
+    <ResponseField name="fields" type="array">
+      Array of detected fields and their properties
+    </ResponseField>
+    <ResponseField name="relationships" type="array">
+      Detected relationships between fields
+    </ResponseField>
+    <ResponseField name="metadata" type="object">
+      Additional schema metadata
+    </ResponseField>
+    <ResponseField name="confidence" type="object">
+      Confidence scores for inferred properties
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "fields": [
+      {
+        "name": "id",
+        "type": "string",
+        "format": "uuid",
+        "required": true,
+        "unique": true,
+        "confidence": 0.99
+      },
+      {
+        "name": "email",
+        "type": "string",
+        "format": "email",
+        "required": true,
+        "unique": true,
+        "confidence": 0.95
+      },
+      {
+        "name": "age",
+        "type": "integer",
+        "min": 0,
+        "max": 120,
+        "confidence": 0.90
+      }
+    ],
+    "relationships": [
+      {
+        "type": "foreign_key",
+        "source": "user_id",
+        "target": "users.id",
+        "confidence": 0.85
+      }
+    ],
+    "metadata": {
+      "total_records": 10000,
+      "analyzed_records": 1000,
+      "timestamp": "2024-03-20T10:30:00Z"
+    },
+    "confidence": {
+      "overall": 0.92,
+      "types": 0.95,
+      "relationships": 0.85
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SOURCE",
+    "message": "Unable to access data source",
+    "details": {
+      "reason": "URL not accessible"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "INFERENCE_FAILED",
+    "message": "Schema inference failed",
+    "details": {
+      "reason": "Insufficient data for analysis"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Create Form" icon="plus" href="/api-reference/forms/core/create">
+  Create a form using the inferred schema
+</Card>
+
+<Card title="Map Fields" icon="arrows-retweet" href="/api-reference/forms/schema/map-fields">
+  Map the inferred schema to existing forms
+</Card>
+```
