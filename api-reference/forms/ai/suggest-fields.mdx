@@ -1,0 +1,267 @@
+---
+title: 'Suggest Form Fields'
+description: 'Get AI-powered field suggestions for your form'
+api: 'POST /v1/forms/ai/suggest-fields'
+---
+
+Get intelligent field suggestions based on form purpose, industry, and existing data.
+
+### Request Body
+
+<ParamField body="context" type="object" required>
+  <Expandable title="Context information">
+    <ParamField body="purpose" type="string" required>
+      Form purpose or use case
+    </ParamField>
+    <ParamField body="industry" type="string">
+      Industry context
+    </ParamField>
+    <ParamField body="target_audience" type="string">
+      Target user demographic
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="existing_fields" type="array">
+  Array of existing field definitions
+</ParamField>
+
+<ParamField body="preferences" type="object">
+  <Expandable title="Suggestion preferences">
+    <ParamField body="field_types" type="array">
+      Preferred field types
+    </ParamField>
+    <ParamField body="complexity" type="string">
+      Suggestion complexity ('simple', 'advanced')
+    </ParamField>
+    <ParamField body="max_suggestions" type="number">
+      Maximum number of suggestions
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/ai/suggest-fields" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "context": {
+      "purpose": "job_application",
+      "industry": "technology",
+      "target_audience": "software_engineers"
+    },
+    "existing_fields": [
+      {
+        "type": "text",
+        "label": "Full Name"
+      },
+      {
+        "type": "email",
+        "label": "Email Address"
+      }
+    ],
+    "preferences": {
+      "field_types": ["text", "select", "file"],
+      "complexity": "advanced",
+      "max_suggestions": 10
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const suggestions = await palm.forms.ai.suggestFields({
+  context: {
+    purpose: 'job_application',
+    industry: 'technology',
+    target_audience: 'software_engineers'
+  },
+  existing_fields: [
+    {
+      type: 'text',
+      label: 'Full Name'
+    },
+    {
+      type: 'email',
+      label: 'Email Address'
+    }
+  ],
+  preferences: {
+    field_types: ['text', 'select', 'file'],
+    complexity: 'advanced',
+    max_suggestions: 10
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+suggestions = palm.forms.ai.suggest_fields(
+    context={
+        'purpose': 'job_application',
+        'industry': 'technology',
+        'target_audience': 'software_engineers'
+    },
+    existing_fields=[
+        {
+            'type': 'text',
+            'label': 'Full Name'
+        },
+        {
+            'type': 'email',
+            'label': 'Email Address'
+        }
+    ],
+    preferences={
+        'field_types': ['text', 'select', 'file'],
+        'complexity': 'advanced',
+        'max_suggestions': 10
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if suggestions were generated successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Suggestion results">
+    <ResponseField name="suggestions" type="array">
+      Array of suggested fields
+    </ResponseField>
+    <ResponseField name="groups" type="array">
+      Suggested field groupings
+    </ResponseField>
+    <ResponseField name="validation_rules" type="array">
+      Suggested validation rules
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "suggestions": [
+      {
+        "type": "text",
+        "label": "Professional Title",
+        "description": "Your current job title",
+        "required": true,
+        "validation": {
+          "min_length": 2,
+          "max_length": 100
+        },
+        "confidence": 0.95,
+        "reason": "Essential for job applications"
+      },
+      {
+        "type": "select",
+        "label": "Years of Experience",
+        "required": true,
+        "options": [
+          {"label": "0-2 years", "value": "entry"},
+          {"label": "3-5 years", "value": "mid"},
+          {"label": "5+ years", "value": "senior"}
+        ],
+        "confidence": 0.92,
+        "reason": "Common qualification metric"
+      },
+      {
+        "type": "file",
+        "label": "Resume/CV",
+        "required": true,
+        "validation": {
+          "allowed_types": ["pdf", "doc", "docx"],
+          "max_size": 5242880
+        },
+        "confidence": 0.98,
+        "reason": "Standard requirement for applications"
+      }
+    ],
+    "groups": [
+      {
+        "name": "Professional Information",
+        "fields": ["professional_title", "years_of_experience"],
+        "order": 1
+      },
+      {
+        "name": "Documents",
+        "fields": ["resume"],
+        "order": 2
+      }
+    ],
+    "validation_rules": [
+      {
+        "field": "professional_title",
+        "rules": [
+          {
+            "type": "required",
+            "message": "Please enter your professional title"
+          }
+        ]
+      }
+    ],
+    "analytics": {
+      "suggestion_quality": 0.95,
+      "industry_relevance": 0.93,
+      "completeness": 0.97
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CONTEXT",
+    "message": "Invalid context information",
+    "details": {
+      "field": "industry",
+      "error": "Unsupported industry type"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "SUGGESTION_FAILED",
+    "message": "Unable to generate suggestions",
+    "details": {
+      "reason": "Insufficient context information"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Add Fields" icon="plus" href="/api-reference/forms/core/update">
+  Add suggested fields to your form
+</Card>
+
+<Card title="Optimize Layout" icon="arrows-maximize" href="/api-reference/forms/ai/optimize-layout">
+  Optimize field layout
+</Card>
