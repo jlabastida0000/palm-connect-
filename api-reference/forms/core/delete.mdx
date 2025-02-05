@@ -1,0 +1,139 @@
+---
+title: 'Delete Form'
+description: 'Delete an existing form'
+api: 'DELETE /v1/forms/{formId}'
+---
+
+Permanently delete a form and optionally its associated data.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to delete
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="delete_responses" type="boolean">
+  Whether to delete associated form responses (default: false)
+</ParamField>
+
+<ParamField query="force" type="boolean">
+  Force deletion even if form is published (default: false)
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+# Simple delete
+curl -X DELETE "https://api.palm.com/v1/forms/form_abc123" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Delete with responses
+curl -X DELETE "https://api.palm.com/v1/forms/form_abc123?delete_responses=true&force=true" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+// Simple delete
+await palm.forms.delete('form_abc123');
+
+// Delete with responses
+await palm.forms.delete('form_abc123', {
+  deleteResponses: true,
+  force: true
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+# Simple delete
+palm.forms.delete('form_abc123')
+
+# Delete with responses
+palm.forms.delete(
+    'form_abc123',
+    delete_responses=True,
+    force=True
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the deletion was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Deletion details">
+    <ResponseField name="deleted_at" type="string">
+      Deletion timestamp
+    </ResponseField>
+    <ResponseField name="responses_deleted" type="number">
+      Number of responses deleted (if applicable)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "form_id": "form_abc123",
+    "deleted_at": "2024-03-20T16:00:00Z",
+    "responses_deleted": 156
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 403 Forbidden
+{
+  "success": false,
+  "error": {
+    "code": "FORM_PUBLISHED",
+    "message": "Cannot delete published form without force flag",
+    "details": {
+      "form_id": "form_abc123",
+      "status": "published"
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "ACTIVE_SUBMISSIONS",
+    "message": "Form has active submissions",
+    "details": {
+      "active_submissions": 5
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Create Form" icon="plus" href="/api-reference/forms/core/create">
+  Create a new form
+</Card>
+
+<Card title="List Forms" icon="list" href="/api-reference/forms/core/list">
+  View all forms
+</Card>
