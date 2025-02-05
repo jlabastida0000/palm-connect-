@@ -1,0 +1,246 @@
+---
+title: 'Update Form'
+description: 'Update form configuration and settings'
+api: 'PUT /v1/forms/{formId}'
+---
+
+Update an existing form's configuration, fields, or settings.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to update
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+  Updated form name
+</ParamField>
+
+<ParamField body="description" type="string">
+  Updated form description
+</ParamField>
+
+<ParamField body="settings" type="object">
+  <Expandable title="Form settings">
+    <ParamField body="validation_mode" type="string">
+      Validation mode ('strict', 'lenient')
+    </ParamField>
+    <ParamField body="analytics_enabled" type="boolean">
+      Enable analytics tracking
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="steps" type="array">
+  <Expandable title="Form steps">
+    <ParamField body="title" type="string">
+      Step title
+    </ParamField>
+    <ParamField body="fields" type="array">
+      Array of field definitions
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X PUT "https://api.palm.com/v1/forms/form_abc123" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Customer Onboarding",
+    "settings": {
+      "validation_mode": "lenient",
+      "analytics_enabled": true
+    },
+    "steps": [
+      {
+        "title": "Updated Information",
+        "fields": [
+          {
+            "type": "text",
+            "label": "Full Legal Name",
+            "required": true
+          },
+          {
+            "type": "email",
+            "label": "Business Email",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const updatedForm = await palm.forms.update('form_abc123', {
+  name: 'Updated Customer Onboarding',
+  settings: {
+    validation_mode: 'lenient',
+    analytics_enabled: true
+  },
+  steps: [
+    {
+      title: 'Updated Information',
+      fields: [
+        {
+          type: 'text',
+          label: 'Full Legal Name',
+          required: true
+        },
+        {
+          type: 'email',
+          label: 'Business Email',
+          required: true
+        }
+      ]
+    }
+  ]
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+updated_form = palm.forms.update(
+    'form_abc123',
+    name='Updated Customer Onboarding',
+    settings={
+        'validation_mode': 'lenient',
+        'analytics_enabled': True
+    },
+    steps=[
+        {
+            'title': 'Updated Information',
+            'fields': [
+                {
+                    'type': 'text',
+                    'label': 'Full Legal Name',
+                    'required': True
+                },
+                {
+                    'type': 'email',
+                    'label': 'Business Email',
+                    'required': True
+                }
+            ]
+        }
+    ]
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the update was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Updated form object">
+    <ResponseField name="id" type="string">
+      Form unique identifier
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Updated form name
+    </ResponseField>
+    <ResponseField name="settings" type="object">
+      Updated form settings
+    </ResponseField>
+    <ResponseField name="version" type="string">
+      New form version
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "form_abc123",
+    "name": "Updated Customer Onboarding",
+    "settings": {
+      "validation_mode": "lenient",
+      "analytics_enabled": true
+    },
+    "steps": [
+      {
+        "id": "step_1",
+        "title": "Updated Information",
+        "fields": [
+          {
+            "id": "field_name",
+            "type": "text",
+            "label": "Full Legal Name",
+            "required": true
+          },
+          {
+            "id": "field_email",
+            "type": "email",
+            "label": "Business Email",
+            "required": true
+          }
+        ]
+      }
+    ],
+    "version": "2",
+    "updated_at": "2024-03-20T15:45:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_UPDATE",
+    "message": "Invalid form update",
+    "details": {
+      "field": "settings.validation_mode",
+      "error": "Invalid validation mode"
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "VERSION_CONFLICT",
+    "message": "Form was updated by another request",
+    "details": {
+      "currentVersion": "2",
+      "requestedVersion": "1"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Publish Form" icon="rocket" href="/api-reference/forms/core/publish">
+  Publish your updated form
+</Card>
+
+<Card title="Add Logic" icon="code" href="/api-reference/forms/logic/conditions">
+  Configure form logic
+</Card>
+```
