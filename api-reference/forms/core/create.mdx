@@ -1,0 +1,242 @@
+---
+title: 'Create Form'
+description: 'Create a new form with specified configuration'
+api: 'POST /v1/forms'
+---
+
+Create a new form with defined fields, validation rules, and layout settings.
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  Name of the form
+</ParamField>
+
+<ParamField body="description" type="string">
+  Description of the form's purpose
+</ParamField>
+
+<ParamField body="settings" type="object" required>
+  <Expandable title="Form settings">
+    <ParamField body="template_id" type="string">
+      Template to base the form on
+    </ParamField>
+    <ParamField body="validation_mode" type="string">
+      Validation mode ('strict', 'lenient')
+    </ParamField>
+    <ParamField body="analytics_enabled" type="boolean">
+      Enable analytics tracking
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="steps" type="array">
+  <Expandable title="Form steps">
+    <ParamField body="title" type="string">
+      Step title
+    </ParamField>
+    <ParamField body="fields" type="array">
+      Array of field definitions
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Customer Onboarding",
+    "description": "New customer registration form",
+    "settings": {
+      "validation_mode": "strict",
+      "analytics_enabled": true
+    },
+    "steps": [
+      {
+        "title": "Basic Information",
+        "fields": [
+          {
+            "type": "text",
+            "label": "Full Name",
+            "required": true
+          },
+          {
+            "type": "email",
+            "label": "Email Address",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const form = await palm.forms.create({
+  name: 'Customer Onboarding',
+  description: 'New customer registration form',
+  settings: {
+    validation_mode: 'strict',
+    analytics_enabled: true
+  },
+  steps: [
+    {
+      title: 'Basic Information',
+      fields: [
+        {
+          type: 'text',
+          label: 'Full Name',
+          required: true
+        },
+        {
+          type: 'email',
+          label: 'Email Address',
+          required: true
+        }
+      ]
+    }
+  ]
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+form = palm.forms.create(
+    name='Customer Onboarding',
+    description='New customer registration form',
+    settings={
+        'validation_mode': 'strict',
+        'analytics_enabled': True
+    },
+    steps=[
+        {
+            'title': 'Basic Information',
+            'fields': [
+                {
+                    'type': 'text',
+                    'label': 'Full Name',
+                    'required': True
+                },
+                {
+                    'type': 'email',
+                    'label': 'Email Address',
+                    'required': True
+                }
+            ]
+        }
+    ]
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the form was created successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Form object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the form
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Form name
+    </ResponseField>
+    <ResponseField name="settings" type="object">
+      Form settings configuration
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      Creation timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "form_abc123",
+    "name": "Customer Onboarding",
+    "description": "New customer registration form",
+    "settings": {
+      "validation_mode": "strict",
+      "analytics_enabled": true
+    },
+    "steps": [
+      {
+        "id": "step_1",
+        "title": "Basic Information",
+        "fields": [
+          {
+            "id": "field_name",
+            "type": "text",
+            "label": "Full Name",
+            "required": true
+          },
+          {
+            "id": "field_email",
+            "type": "email",
+            "label": "Email Address",
+            "required": true
+          }
+        ]
+      }
+    ],
+    "created_at": "2024-03-20T10:30:00Z",
+    "updated_at": "2024-03-20T10:30:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Invalid form configuration",
+    "details": {
+      "field": "settings.validation_mode",
+      "error": "Invalid validation mode specified"
+    }
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or missing API key"
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Add Fields" icon="plus" href="/api-reference/forms/core/update">
+  Add more fields to your form
+</Card>
+
+<Card title="Configure Logic" icon="code" href="/api-reference/forms/logic/conditions">
+  Add form logic and conditions
+</Card>
+```
