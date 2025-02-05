@@ -1,0 +1,261 @@
+---
+title: 'Optimize Form Layout'
+description: 'AI-powered form layout optimization'
+api: 'POST /v1/forms/{formId}/ai/optimize-layout'
+---
+
+Analyze and optimize form layout for better user experience and conversion rates using AI.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to optimize
+</ParamField>
+
+### Request Body
+
+<ParamField body="optimization_goals" type="array" required>
+  <Expandable title="Optimization goals">
+    <ParamField body="type" type="string">
+      Type of optimization ('completion_rate', 'time_to_complete', 'error_reduction')
+    </ParamField>
+    <ParamField body="weight" type="number">
+      Relative importance (0-1)
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="constraints" type="object">
+  <Expandable title="Layout constraints">
+    <ParamField body="max_fields_per_step" type="number">
+      Maximum fields per step
+    </ParamField>
+    <ParamField body="maintain_field_groups" type="boolean">
+      Keep related fields together
+    </ParamField>
+    <ParamField body="responsive_breakpoints" type="array">
+      Screen sizes to optimize for
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/ai/optimize-layout" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "optimization_goals": [
+      {
+        "type": "completion_rate",
+        "weight": 0.7
+      },
+      {
+        "type": "time_to_complete",
+        "weight": 0.3
+      }
+    ],
+    "constraints": {
+      "max_fields_per_step": 5,
+      "maintain_field_groups": true,
+      "responsive_breakpoints": ["mobile", "tablet", "desktop"]
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const optimizedLayout = await palm.forms.ai.optimizeLayout('form_abc123', {
+  optimization_goals: [
+    {
+      type: 'completion_rate',
+      weight: 0.7
+    },
+    {
+      type: 'time_to_complete',
+      weight: 0.3
+    }
+  ],
+  constraints: {
+    max_fields_per_step: 5,
+    maintain_field_groups: true,
+    responsive_breakpoints: ['mobile', 'tablet', 'desktop']
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+optimized_layout = palm.forms.ai.optimize_layout(
+    'form_abc123',
+    optimization_goals=[
+        {
+            'type': 'completion_rate',
+            'weight': 0.7
+        },
+        {
+            'type': 'time_to_complete',
+            'weight': 0.3
+        }
+    ],
+    constraints={
+        'max_fields_per_step': 5,
+        'maintain_field_groups': True,
+        'responsive_breakpoints': ['mobile', 'tablet', 'desktop']
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the optimization was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Optimization results">
+    <ResponseField name="layout" type="object">
+      Optimized layout configuration
+    </ResponseField>
+    <ResponseField name="improvements" type="object">
+      Expected improvements in metrics
+    </ResponseField>
+    <ResponseField name="analysis" type="object">
+      Analysis of changes made
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "layout": {
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Basic Information",
+          "fields": [
+            {
+              "id": "name",
+              "type": "text",
+              "position": {
+                "order": 1,
+                "grid_area": "1 / 1 / 2 / 3"
+              }
+            },
+            {
+              "id": "email",
+              "type": "email",
+              "position": {
+                "order": 2,
+                "grid_area": "2 / 1 / 3 / 3"
+              }
+            }
+          ],
+          "layout": {
+            "type": "grid",
+            "columns": 2,
+            "spacing": "comfortable"
+          }
+        }
+      ],
+      "responsive_layouts": {
+        "mobile": {
+          "columns": 1,
+          "stack_fields": true
+        },
+        "tablet": {
+          "columns": 2,
+          "stack_fields": false
+        }
+      }
+    },
+    "improvements": {
+      "completion_rate": {
+        "before": 65,
+        "after": 82,
+        "increase": "26%"
+      },
+      "time_to_complete": {
+        "before": 240,
+        "after": 180,
+        "reduction": "25%"
+      }
+    },
+    "analysis": {
+      "changes_made": [
+        {
+          "type": "field_reordering",
+          "reason": "Improve logical flow",
+          "confidence": 0.85
+        },
+        {
+          "type": "responsive_optimization",
+          "reason": "Better mobile experience",
+          "confidence": 0.92
+        }
+      ],
+      "recommendations": [
+        {
+          "type": "add_progress_indicator",
+          "description": "Add progress bar for better user orientation",
+          "impact": "medium"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_OPTIMIZATION_GOALS",
+    "message": "Invalid optimization goals specified",
+    "details": {
+      "field": "optimization_goals",
+      "error": "Weights must sum to 1.0"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "OPTIMIZATION_FAILED",
+    "message": "Unable to optimize layout",
+    "details": {
+      "reason": "Insufficient form data for analysis"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Apply Layout" icon="check" href="/api-reference/forms/core/update">
+  Apply the optimized layout to your form
+</Card>
+
+<Card title="Improve UX" icon="sparkles" href="/api-reference/forms/ai/improve-ux">
+  Further improve form user experience
+</Card>
