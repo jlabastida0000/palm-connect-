@@ -1,0 +1,241 @@
+---
+title: 'Generate Validation Rules'
+description: 'Generate intelligent form validation rules using AI'
+api: 'POST /v1/forms/{formId}/ai/validation-rules'
+---
+
+Generate context-aware validation rules for form fields using AI analysis.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to generate rules for
+</ParamField>
+
+### Request Body
+
+<ParamField body="fields" type="array" required>
+  Array of fields to generate rules for
+</ParamField>
+
+<ParamField body="context" type="object">
+  <Expandable title="Validation context">
+    <ParamField body="industry" type="string">
+      Industry-specific context
+    </ParamField>
+    <ParamField body="country" type="string">
+      Country-specific rules
+    </ParamField>
+    <ParamField body="strictness" type="string">
+      Validation strictness level ('relaxed', 'normal', 'strict')
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/ai/validation-rules" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fields": [
+      {
+        "id": "tax_id",
+        "type": "text",
+        "label": "Tax ID"
+      },
+      {
+        "id": "company_registration",
+        "type": "text",
+        "label": "Company Registration Number"
+      }
+    ],
+    "context": {
+      "industry": "financial_services",
+      "country": "US",
+      "strictness": "strict"
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const validationRules = await palm.forms.ai.generateValidationRules('form_abc123', {
+  fields: [
+    {
+      id: 'tax_id',
+      type: 'text',
+      label: 'Tax ID'
+    },
+    {
+      id: 'company_registration',
+      type: 'text',
+      label: 'Company Registration Number'
+    }
+  ],
+  context: {
+    industry: 'financial_services',
+    country: 'US',
+    strictness: 'strict'
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+validation_rules = palm.forms.ai.generate_validation_rules(
+    'form_abc123',
+    fields=[
+        {
+            'id': 'tax_id',
+            'type': 'text',
+            'label': 'Tax ID'
+        },
+        {
+            'id': 'company_registration',
+            'type': 'text',
+            'label': 'Company Registration Number'
+        }
+    ],
+    context={
+        'industry': 'financial_services',
+        'country': 'US',
+        'strictness': 'strict'
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if rules were generated successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Generated rules">
+    <ResponseField name="rules" type="array">
+      Array of validation rules
+    </ResponseField>
+    <ResponseField name="dependencies" type="array">
+      Field dependencies for complex validations
+    </ResponseField>
+    <ResponseField name="messages" type="object">
+      Custom error messages
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "rules": [
+      {
+        "field_id": "tax_id",
+        "validations": [
+          {
+            "type": "pattern",
+            "pattern": "^\\d{2}-\\d{7}$",
+            "message": "Enter a valid Tax ID (XX-XXXXXXX)",
+            "reason": "US Tax ID format",
+            "confidence": 0.95
+          },
+          {
+            "type": "checksum",
+            "algorithm": "tax_id_validation",
+            "message": "Invalid Tax ID checksum",
+            "confidence": 0.98
+          }
+        ]
+      },
+      {
+        "field_id": "company_registration",
+        "validations": [
+          {
+            "type": "pattern",
+            "pattern": "^[A-Z0-9]{10}$",
+            "message": "Enter a valid registration number",
+            "reason": "Standard format",
+            "confidence": 0.92
+          }
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "field": "company_registration",
+        "depends_on": "state",
+        "rule": {
+          "type": "state_specific_format",
+          "formats": {
+            "CA": "^C\\d{7}$",
+            "NY": "^NY\\d{8}$"
+          }
+        }
+      }
+    ],
+    "messages": {
+      "required": "This field is required for financial compliance",
+      "invalid_format": "Please check the format and try again",
+      "validation_failed": "Unable to verify this {field}"
+    },
+    "metadata": {
+      "industry_specific": true,
+      "compliance_verified": true,
+      "last_updated": "2024-03-20T16:30:00Z"
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FIELD_TYPE",
+    "message": "Unsupported field type for validation",
+    "details": {
+      "field_id": "tax_id",
+      "type": "custom"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_GENERATION_FAILED",
+    "message": "Unable to generate validation rules",
+    "details": {
+      "reason": "Insufficient field context"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Apply Rules" icon="check" href="/api-reference/forms/core/update">
+  Apply generated validation rules
+</Card>
+
+<Card title="Test Rules" icon="vial" href="/api-reference/forms/testing">
+  Test validation rules
+</Card>
