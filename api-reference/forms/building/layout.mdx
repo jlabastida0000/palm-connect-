@@ -1,5 +1,300 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Form Layout'
+description: 'Configure form layout and appearance'
+api: 'POST /v1/forms/{formId}/layout'
 ---
 
+Configure the visual layout and structure of your form, including responsive design settings.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to configure layout for
+</ParamField>
+
+### Request Body
+
+<ParamField body="layout" type="object" required>
+  <Expandable title="Layout configuration">
+    <ParamField body="type" type="string">
+      Layout type ('single', 'tabs', 'wizard')
+    </ParamField>
+    <ParamField body="theme" type="object">
+      Theme configuration
+    </ParamField>
+    <ParamField body="responsive" type="object">
+      Responsive design settings
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Layout Types
+
+```json
+{
+  "types": {
+    "single": "All steps in single page",
+    "tabs": "Steps as tabs",
+    "wizard": "Step-by-step wizard",
+    "custom": "Custom layout template"
+  },
+  "grid_systems": {
+    "fixed": "Fixed-width layout",
+    "fluid": "Full-width layout",
+    "grid": "CSS Grid layout"
+  },
+  "responsive_modes": {
+    "auto": "Automatic responsiveness",
+    "breakpoint": "Breakpoint-based",
+    "custom": "Custom responsive rules"
+  }
+}
+```
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/layout" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layout": {
+      "type": "wizard",
+      "theme": {
+        "colors": {
+          "primary": "#7B61FF",
+          "secondary": "#2E2E2E",
+          "background": "#FFFFFF"
+        },
+        "typography": {
+          "font_family": "Inter",
+          "heading_size": "24px",
+          "body_size": "16px"
+        }
+      },
+      "responsive": {
+        "mode": "breakpoint",
+        "breakpoints": {
+          "mobile": {
+            "max_width": "640px",
+            "columns": 1
+          },
+          "tablet": {
+            "max_width": "1024px",
+            "columns": 2
+          },
+          "desktop": {
+            "min_width": "1024px",
+            "columns": 3
+          }
+        }
+      },
+      "grid": {
+        "type": "fluid",
+        "gap": "20px",
+        "padding": "24px"
+      }
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const layout = await palm.forms.layout.configure('form_abc123', {
+  layout: {
+    type: 'wizard',
+    theme: {
+      colors: {
+        primary: '#7B61FF',
+        secondary: '#2E2E2E',
+        background: '#FFFFFF'
+      },
+      typography: {
+        font_family: 'Inter',
+        heading_size: '24px',
+        body_size: '16px'
+      }
+    },
+    responsive: {
+      mode: 'breakpoint',
+      breakpoints: {
+        mobile: {
+          max_width: '640px',
+          columns: 1
+        },
+        tablet: {
+          max_width: '1024px',
+          columns: 2
+        },
+        desktop: {
+          min_width: '1024px',
+          columns: 3
+        }
+      }
+    },
+    grid: {
+      type: 'fluid',
+      gap: '20px',
+      padding: '24px'
+    }
+  }
+});
+```
+</CodeGroup>
+
+### Layout Operations
+
+```mdx
+GET /v1/forms/{formId}/layout
+Get current layout configuration
+
+PUT /v1/forms/{formId}/layout
+Update layout configuration
+
+POST /v1/forms/{formId}/layout/preview
+Generate layout preview
+
+GET /v1/forms/{formId}/layout/templates
+Get available layout templates
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if layout configuration was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Layout configuration">
+    <ResponseField name="layout" type="object">
+      Layout settings
+    </ResponseField>
+    <ResponseField name="preview_url" type="string">
+      URL to preview layout
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "layout": {
+      "type": "wizard",
+      "theme": {
+        "colors": {
+          "primary": "#7B61FF",
+          "secondary": "#2E2E2E",
+          "background": "#FFFFFF"
+        },
+        "typography": {
+          "font_family": "Inter",
+          "heading_size": "24px",
+          "body_size": "16px"
+        }
+      },
+      "responsive": {
+        "mode": "breakpoint",
+        "breakpoints": {
+          "mobile": {
+            "max_width": "640px",
+            "columns": 1
+          },
+          "tablet": {
+            "max_width": "1024px",
+            "columns": 2
+          },
+          "desktop": {
+            "min_width": "1024px",
+            "columns": 3
+          }
+        }
+      },
+      "grid": {
+        "type": "fluid",
+        "gap": "20px",
+        "padding": "24px"
+      }
+    },
+    "preview_url": "https://forms.palm.com/preview/abc123",
+    "metadata": {
+      "updated_at": "2024-03-20T10:30:00Z",
+      "version": 2
+    }
+  }
+}
+```
+
+### CSS Export Example
+
+```json
+POST /v1/forms/{formId}/layout/css
+
+Response:
+{
+  "success": true,
+  "data": {
+    "css": {
+      "base": "/* Base styles */",
+      "responsive": "/* Responsive styles */",
+      "themes": {
+        "light": "/* Light theme */",
+        "dark": "/* Dark theme */"
+      }
+    },
+    "assets": [
+      {
+        "type": "font",
+        "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      }
+    ]
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_LAYOUT",
+    "message": "Invalid layout configuration",
+    "details": {
+      "field": "breakpoints.mobile.max_width",
+      "error": "Invalid CSS unit"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "LAYOUT_CONFLICT",
+    "message": "Layout configuration conflict",
+    "details": {
+      "conflict": "Grid columns exceed container width at mobile breakpoint"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Preview Layout" icon="eye" href="/api-reference/forms/preview">
+  Preview your form layout
+</Card>
+
+<Card title="Test Responsiveness" icon="mobile" href="/api-reference/forms/testing">
+  Test responsive behavior
+</Card>

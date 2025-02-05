@@ -1,5 +1,287 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Form Validation'
+description: 'Configure form and field validation rules'
+api: 'POST /v1/forms/{formId}/validation'
 ---
 
+Set up validation rules for forms and fields to ensure data quality and consistency.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to configure validation for
+</ParamField>
+
+### Request Body
+
+<ParamField body="rules" type="array" required>
+  <Expandable title="Validation rules">
+    <ParamField body="field" type="string">
+      Field ID to validate
+    </ParamField>
+    <ParamField body="type" type="string">
+      Validation type
+    </ParamField>
+    <ParamField body="config" type="object">
+      Validation configuration
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Supported Validation Types
+
+```json
+{
+  "basic": {
+    "required": "Field must have a value",
+    "min_length": "Minimum length requirement",
+    "max_length": "Maximum length requirement",
+    "pattern": "Regex pattern matching"
+  },
+  "type_specific": {
+    "email": "Email format validation",
+    "phone": "Phone number format",
+    "number": "Numeric constraints",
+    "date": "Date constraints and format"
+  },
+  "custom": {
+    "function": "Custom validation function",
+    "api": "External API validation",
+    "complex": "Multi-field validation"
+  }
+}
+```
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/validation" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rules": [
+      {
+        "field": "email",
+        "type": "email",
+        "config": {
+          "allow_disposable": false,
+          "domain_whitelist": ["company.com"]
+        }
+      },
+      {
+        "field": "password",
+        "type": "password_strength",
+        "config": {
+          "min_length": 8,
+          "require_uppercase": true,
+          "require_number": true,
+          "require_special": true
+        }
+      },
+      {
+        "type": "cross_field",
+        "config": {
+          "fields": ["password", "confirm_password"],
+          "rule": "equality",
+          "message": "Passwords must match"
+        }
+      }
+    ]
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const validation = await palm.forms.validation.create('form_abc123', {
+  rules: [
+    {
+      field: 'email',
+      type: 'email',
+      config: {
+        allow_disposable: false,
+        domain_whitelist: ['company.com']
+      }
+    },
+    {
+      field: 'password',
+      type: 'password_strength',
+      config: {
+        min_length: 8,
+        require_uppercase: true,
+        require_number: true,
+        require_special: true
+      }
+    },
+    {
+      type: 'cross_field',
+      config: {
+        fields: ['password', 'confirm_password'],
+        rule: 'equality',
+        message: 'Passwords must match'
+      }
+    }
+  ]
+});
+```
+</CodeGroup>
+
+### Validation Operations
+
+```mdx
+GET /v1/forms/{formId}/validation
+Get all validation rules
+
+PUT /v1/forms/{formId}/validation/{ruleId}
+Update validation rule
+
+DELETE /v1/forms/{formId}/validation/{ruleId}
+Delete validation rule
+
+POST /v1/forms/{formId}/validation/test
+Test validation rules with sample data
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if validation setup was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Validation configuration">
+    <ResponseField name="rules" type="array">
+      Array of validation rules
+    </ResponseField>
+    <ResponseField name="messages" type="object">
+      Custom error messages
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "rules": [
+      {
+        "id": "rule_abc123",
+        "field": "email",
+        "type": "email",
+        "config": {
+          "allow_disposable": false,
+          "domain_whitelist": ["company.com"]
+        },
+        "message": {
+          "invalid": "Please enter a valid company email address",
+          "disposable": "Disposable email addresses are not allowed"
+        }
+      },
+      {
+        "id": "rule_def456",
+        "field": "password",
+        "type": "password_strength",
+        "config": {
+          "min_length": 8,
+          "require_uppercase": true,
+          "require_number": true,
+          "require_special": true
+        },
+        "message": "Password must be at least 8 characters and include uppercase, number, and special characters"
+      }
+    ],
+    "metadata": {
+      "updated_at": "2024-03-20T10:30:00Z"
+    }
+  }
+}
+```
+
+### Test Validation Example
+
+```json
+POST /v1/forms/{formId}/validation/test
+
+{
+  "data": {
+    "email": "user@company.com",
+    "password": "Secure123!",
+    "confirm_password": "Secure123!"
+  }
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "valid": true,
+    "results": [
+      {
+        "field": "email",
+        "valid": true
+      },
+      {
+        "field": "password",
+        "valid": true
+      },
+      {
+        "field": "cross_field",
+        "valid": true
+      }
+    ]
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_VALIDATION_RULE",
+    "message": "Invalid validation configuration",
+    "details": {
+      "rule": "password_strength",
+      "error": "min_length must be a positive integer"
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_CONFLICT",
+    "message": "Conflicting validation rules",
+    "details": {
+      "field": "age",
+      "conflicts": [
+        {
+          "rule1": "min",
+          "rule2": "max",
+          "reason": "min value greater than max"
+        }
+      ]
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Test Validation" icon="vial" href="/api-reference/forms/testing">
+  Test your validation rules
+</Card>
+
+<Card title="Add Logic" icon="code" href="/api-reference/forms/logic/conditions">
+  Add conditional validation
+</Card>
