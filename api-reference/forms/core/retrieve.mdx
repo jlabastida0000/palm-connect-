@@ -1,0 +1,176 @@
+---
+title: 'Retrieve Form'
+description: 'Get form details and configuration'
+api: 'GET /v1/forms/{formId}'
+---
+
+Retrieve complete details about a specific form including its structure, fields, and settings.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to retrieve
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="include" type="string">
+  Additional data to include (e.g., "responses,analytics")
+</ParamField>
+
+<ParamField query="version" type="string">
+  Specific version to retrieve
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl "https://api.palm.com/v1/forms/form_abc123" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Include additional data
+curl "https://api.palm.com/v1/forms/form_abc123?include=responses,analytics" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+// Get basic form details
+const form = await palm.forms.retrieve('form_abc123');
+
+// Include additional data
+const formWithData = await palm.forms.retrieve('form_abc123', {
+  include: ['responses', 'analytics']
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+# Get basic form details
+form = palm.forms.retrieve('form_abc123')
+
+# Include additional data
+form_with_data = palm.forms.retrieve(
+    'form_abc123',
+    include=['responses', 'analytics']
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Form object">
+    <ResponseField name="id" type="string">
+      Form unique identifier
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Form name
+    </ResponseField>
+    <ResponseField name="steps" type="array">
+      Form steps configuration
+    </ResponseField>
+    <ResponseField name="settings" type="object">
+      Form settings
+    </ResponseField>
+    <ResponseField name="stats" type="object">
+      Form usage statistics
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "form_abc123",
+    "name": "Customer Onboarding",
+    "description": "New customer registration form",
+    "settings": {
+      "validation_mode": "strict",
+      "analytics_enabled": true
+    },
+    "steps": [
+      {
+        "id": "step_1",
+        "title": "Basic Information",
+        "fields": [
+          {
+            "id": "field_name",
+            "type": "text",
+            "label": "Full Name",
+            "required": true
+          },
+          {
+            "id": "field_email",
+            "type": "email",
+            "label": "Email Address",
+            "required": true
+          }
+        ]
+      }
+    ],
+    "stats": {
+      "total_responses": 156,
+      "completion_rate": 87.5,
+      "average_time": 180
+    },
+    "created_at": "2024-03-20T10:30:00Z",
+    "updated_at": "2024-03-20T14:15:00Z"
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 404 Not Found
+{
+  "success": false,
+  "error": {
+    "code": "FORM_NOT_FOUND",
+    "message": "Form not found",
+    "details": {
+      "formId": "form_abc123"
+    }
+  }
+}
+```
+
+```json 403 Forbidden
+{
+  "success": false,
+  "error": {
+    "code": "INSUFFICIENT_PERMISSIONS",
+    "message": "Insufficient permissions to access form",
+    "details": {
+      "requiredRole": "FORM_VIEWER"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Update Form" icon="pen" href="/api-reference/forms/core/update">
+  Update form configuration
+</Card>
+
+<Card title="View Responses" icon="list" href="/api-reference/forms/responses/list">
+  View form submissions
+</Card>
+```
