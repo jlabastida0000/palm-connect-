@@ -1,5 +1,219 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Form Steps'
+description: 'Manage form steps and navigation'
+api: 'POST /v1/forms/{formId}/steps'
 ---
 
+Create and manage form steps, including their content, order, and navigation logic.
+
+### Create Step
+
+<ParamField path="formId" type="string" required>
+  ID of the form to add steps to
+</ParamField>
+
+<ParamField body="title" type="string" required>
+  Step title
+</ParamField>
+
+<ParamField body="description" type="string">
+  Step description
+</ParamField>
+
+<ParamField body="config" type="object" required>
+  <Expandable title="Step configuration">
+    <ParamField body="order" type="number">
+      Step order in sequence
+    </ParamField>
+    <ParamField body="navigation" type="object">
+      Navigation rules and conditions
+    </ParamField>
+    <ParamField body="layout" type="object">
+      Step layout configuration
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/steps" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Personal Information",
+    "description": "Enter your basic details",
+    "config": {
+      "order": 1,
+      "navigation": {
+        "next": {
+          "condition": "all_fields_valid",
+          "target": "step_2"
+        },
+        "back": true
+      },
+      "layout": {
+        "type": "single_column",
+        "width": "full"
+      }
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const step = await palm.forms.steps.create('form_abc123', {
+  title: 'Personal Information',
+  description: 'Enter your basic details',
+  config: {
+    order: 1,
+    navigation: {
+      next: {
+        condition: 'all_fields_valid',
+        target: 'step_2'
+      },
+      back: true
+    },
+    layout: {
+      type: 'single_column',
+      width: 'full'
+    }
+  }
+});
+```
+</CodeGroup>
+
+### Step Management Operations
+
+```mdx
+GET /v1/forms/{formId}/steps
+List all steps in a form
+
+GET /v1/forms/{formId}/steps/{stepId}
+Get step details
+
+PUT /v1/forms/{formId}/steps/{stepId}
+Update step configuration
+
+DELETE /v1/forms/{formId}/steps/{stepId}
+Delete step
+
+POST /v1/forms/{formId}/steps/reorder
+Reorder form steps
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Step object">
+    <ResponseField name="id" type="string">
+      Step ID
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Step title
+    </ResponseField>
+    <ResponseField name="config" type="object">
+      Step configuration
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "step_abc123",
+    "title": "Personal Information",
+    "description": "Enter your basic details",
+    "config": {
+      "order": 1,
+      "navigation": {
+        "next": {
+          "condition": "all_fields_valid",
+          "target": "step_2"
+        },
+        "back": true
+      },
+      "layout": {
+        "type": "single_column",
+        "width": "full"
+      }
+    },
+    "fields": [],
+    "metadata": {
+      "created_at": "2024-03-20T10:30:00Z",
+      "updated_at": "2024-03-20T10:30:00Z"
+    }
+  }
+}
+```
+
+### Reorder Steps Example
+
+```json
+POST /v1/forms/{formId}/steps/reorder
+
+{
+  "steps": [
+    {
+      "id": "step_abc123",
+      "order": 2
+    },
+    {
+      "id": "step_def456",
+      "order": 1
+    }
+  ]
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_STEP_CONFIG",
+    "message": "Invalid step configuration",
+    "details": {
+      "field": "navigation.next.target",
+      "error": "Target step does not exist"
+    }
+  }
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": {
+    "code": "STEP_ORDER_CONFLICT",
+    "message": "Step order conflict",
+    "details": {
+      "conflicting_step": "step_def456"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Add Fields" icon="plus" href="/api-reference/forms/building/fields">
+  Add fields to your step
+</Card>
+
+<Card title="Configure Navigation" icon="arrow-right" href="/api-reference/forms/logic/conditions">
+  Set up step navigation logic
+</Card>

@@ -1,5 +1,255 @@
 ---
-title: 'New file'
-description: 'Description of your new file.'
+title: 'Form Fields'
+description: 'Manage form fields and their properties'
+api: 'POST /v1/forms/{formId}/steps/{stepId}/fields'
 ---
 
+Create and manage form fields, including their types, properties, and behavior.
+
+### Create Field
+
+<ParamField path="formId" type="string" required>
+  ID of the form
+</ParamField>
+
+<ParamField path="stepId" type="string" required>
+  ID of the step to add field to
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Field type ('text', 'number', 'select', etc.)
+</ParamField>
+
+<ParamField body="config" type="object" required>
+  <Expandable title="Field configuration">
+    <ParamField body="label" type="string" required>
+      Field label
+    </ParamField>
+    <ParamField body="required" type="boolean">
+      Whether field is required
+    </ParamField>
+    <ParamField body="validation" type="object">
+      Validation rules
+    </ParamField>
+    <ParamField body="appearance" type="object">
+      Visual configuration
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Supported Field Types
+
+```json
+{
+  "basic": [
+    "text",
+    "number",
+    "email",
+    "phone",
+    "date",
+    "time"
+  ],
+  "selection": [
+    "select",
+    "multi-select",
+    "radio",
+    "checkbox"
+  ],
+  "complex": [
+    "file",
+    "signature",
+    "address",
+    "payment"
+  ]
+}
+```
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/steps/step_def456/fields" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "text",
+    "config": {
+      "label": "Full Name",
+      "required": true,
+      "validation": {
+        "min_length": 2,
+        "max_length": 100,
+        "pattern": "^[a-zA-Z ]+$"
+      },
+      "appearance": {
+        "placeholder": "Enter your full name",
+        "help_text": "As it appears on official documents",
+        "width": "full"
+      }
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const field = await palm.forms.fields.create('form_abc123', 'step_def456', {
+  type: 'text',
+  config: {
+    label: 'Full Name',
+    required: true,
+    validation: {
+      min_length: 2,
+      max_length: 100,
+      pattern: '^[a-zA-Z ]+$'
+    },
+    appearance: {
+      placeholder: 'Enter your full name',
+      help_text: 'As it appears on official documents',
+      width: 'full'
+    }
+  }
+});
+```
+</CodeGroup>
+
+### Field Management Operations
+
+```mdx
+GET /v1/forms/{formId}/steps/{stepId}/fields
+List all fields in a step
+
+GET /v1/forms/{formId}/steps/{stepId}/fields/{fieldId}
+Get field details
+
+PUT /v1/forms/{formId}/steps/{stepId}/fields/{fieldId}
+Update field configuration
+
+DELETE /v1/forms/{formId}/steps/{stepId}/fields/{fieldId}
+Delete field
+
+POST /v1/forms/{formId}/steps/{stepId}/fields/reorder
+Reorder fields in a step
+```
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Field object">
+    <ResponseField name="id" type="string">
+      Field ID
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Field type
+    </ResponseField>
+    <ResponseField name="config" type="object">
+      Field configuration
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "field_abc123",
+    "type": "text",
+    "config": {
+      "label": "Full Name",
+      "required": true,
+      "validation": {
+        "min_length": 2,
+        "max_length": 100,
+        "pattern": "^[a-zA-Z ]+$"
+      },
+      "appearance": {
+        "placeholder": "Enter your full name",
+        "help_text": "As it appears on official documents",
+        "width": "full"
+      }
+    },
+    "metadata": {
+      "created_at": "2024-03-20T10:30:00Z",
+      "updated_at": "2024-03-20T10:30:00Z"
+    },
+    "stats": {
+      "fill_rate": 98.5,
+      "error_rate": 1.2
+    }
+  }
+}
+```
+
+### Field Dependencies Example
+
+```json
+{
+  "dependencies": {
+    "show_if": {
+      "field": "employment_status",
+      "equals": "employed"
+    },
+    "required_if": {
+      "field": "has_company",
+      "equals": true
+    },
+    "options_from": {
+      "field": "country",
+      "mapping": {
+        "US": ["California", "New York"],
+        "CA": ["Ontario", "Quebec"]
+      }
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FIELD_TYPE",
+    "message": "Invalid field type",
+    "details": {
+      "type": "unknown_type",
+      "supported_types": ["text", "number", "email"]
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_VALIDATION",
+    "message": "Invalid validation configuration",
+    "details": {
+      "validation": "pattern",
+      "error": "Invalid regex pattern"
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Add Validation" icon="check" href="/api-reference/forms/building/validation">
+  Configure field validation
+</Card>
+
+<Card title="Set Dependencies" icon="link" href="/api-reference/forms/logic/conditions">
+  Set up field dependencies
+</Card>
