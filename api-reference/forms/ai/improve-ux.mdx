@@ -1,0 +1,221 @@
+---
+title: 'Improve Form UX'
+description: 'Get AI-powered UX improvement suggestions'
+api: 'POST /v1/forms/{formId}/ai/improve-ux'
+---
+
+Analyze form usage patterns and get AI-powered suggestions to improve user experience.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form to analyze
+</ParamField>
+
+### Request Body
+
+<ParamField body="analysis_type" type="array" required>
+  Types of analysis to perform ('completion_rate', 'error_patterns', 'user_behavior', 'abandonment')
+</ParamField>
+
+<ParamField body="metrics" type="object">
+  <Expandable title="Target metrics">
+    <ParamField body="completion_target" type="number">
+      Target completion rate (%)
+    </ParamField>
+    <ParamField body="max_time" type="number">
+      Target completion time (seconds)
+    </ParamField>
+    <ParamField body="error_threshold" type="number">
+      Acceptable error rate (%)
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.palm.com/v1/forms/form_abc123/ai/improve-ux" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "analysis_type": ["completion_rate", "error_patterns", "user_behavior"],
+    "metrics": {
+      "completion_target": 90,
+      "max_time": 300,
+      "error_threshold": 5
+    }
+  }'
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+const uxImprovements = await palm.forms.ai.improveUx('form_abc123', {
+  analysis_type: ['completion_rate', 'error_patterns', 'user_behavior'],
+  metrics: {
+    completion_target: 90,
+    max_time: 300,
+    error_threshold: 5
+  }
+});
+```
+
+```python Python
+from palm import Palm
+
+palm = Palm('YOUR_API_KEY')
+
+ux_improvements = palm.forms.ai.improve_ux(
+    'form_abc123',
+    analysis_type=['completion_rate', 'error_patterns', 'user_behavior'],
+    metrics={
+        'completion_target': 90,
+        'max_time': 300,
+        'error_threshold': 5
+    }
+)
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if analysis was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Analysis results">
+    <ResponseField name="current_metrics" type="object">
+      Current form performance metrics
+    </ResponseField>
+    <ResponseField name="suggestions" type="array">
+      Improvement suggestions
+    </ResponseField>
+    <ResponseField name="impact_analysis" type="object">
+      Expected impact of changes
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "current_metrics": {
+      "completion_rate": 75,
+      "average_time": 420,
+      "error_rate": 8.5,
+      "abandonment_points": [
+        {
+          "step": 2,
+          "field": "company_details",
+          "rate": 15
+        }
+      ]
+    },
+    "suggestions": [
+      {
+        "type": "field_improvement",
+        "target": {
+          "step": 2,
+          "field": "company_details"
+        },
+        "suggestion": "Break into smaller fields",
+        "reason": "High error rate and abandonment",
+        "priority": "high",
+        "implementation": {
+          "type": "field_split",
+          "new_fields": [
+            {
+              "label": "Company Name",
+              "type": "text"
+            },
+            {
+              "label": "Company Size",
+              "type": "select"
+            }
+          ]
+        }
+      },
+      {
+        "type": "validation_improvement",
+        "target": {
+          "step": 1,
+          "field": "email"
+        },
+        "suggestion": "Add real-time validation",
+        "reason": "Users submit invalid emails",
+        "priority": "medium",
+        "implementation": {
+          "type": "validation_rule",
+          "rule": "email_format"
+        }
+      }
+    ],
+    "impact_analysis": {
+      "completion_rate": {
+        "current": 75,
+        "predicted": 88,
+        "improvement": "17%"
+      },
+      "time_to_complete": {
+        "current": 420,
+        "predicted": 280,
+        "improvement": "33%"
+      },
+      "error_rate": {
+        "current": 8.5,
+        "predicted": 4.2,
+        "improvement": "51%"
+      }
+    }
+  }
+}
+```
+
+### Error Handling
+
+<CodeGroup>
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_ANALYSIS_TYPE",
+    "message": "Invalid analysis type specified",
+    "details": {
+      "valid_types": ["completion_rate", "error_patterns", "user_behavior"]
+    }
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": {
+    "code": "INSUFFICIENT_DATA",
+    "message": "Not enough form submissions for analysis",
+    "details": {
+      "required_submissions": 50,
+      "current_submissions": 12
+    }
+  }
+}
+```
+</CodeGroup>
+
+### Next Steps
+
+<Card title="Apply Changes" icon="pen" href="/api-reference/forms/core/update">
+  Implement suggested improvements
+</Card>
+
+<Card title="Monitor Impact" icon="chart-line" href="/api-reference/forms/analytics">
+  Track improvement results
+</Card>
