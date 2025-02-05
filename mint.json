@@ -78,11 +78,56 @@
         {
           "group": "Forms Building",
           "pages": [
-            "api-reference/forms/building/templates",
-            "api-reference/forms/building/steps",
-            "api-reference/forms/building/fields",
-            "api-reference/forms/building/validation",
-            "api-reference/forms/building/layout"
+            {
+              "group": "Templates",
+              "pages": [
+                "api-reference/forms/building/templates/create",
+                "api-reference/forms/building/templates/list",
+                "api-reference/forms/building/templates/get",
+                "api-reference/forms/building/templates/update",
+                "api-reference/forms/building/templates/delete"
+              ]
+            },
+            {
+              "group": "Fields",
+              "pages": [
+                "api-reference/forms/building/fields/create",
+                "api-reference/forms/building/fields/list",
+                "api-reference/forms/building/fields/get",
+                "api-reference/forms/building/fields/update",
+                "api-reference/forms/building/fields/delete",
+                "api-reference/forms/building/fields/reorder"
+              ]
+            },
+            {
+              "group": "Validation Rules",
+              "pages": [
+                "api-reference/forms/building/validation/create",
+                "api-reference/forms/building/validation/list",
+                "api-reference/forms/building/validation/get",
+                "api-reference/forms/building/validation/update",
+                "api-reference/forms/building/validation/delete"
+              ]
+            },
+            {
+              "group": "Layout",
+              "pages": [
+                "api-reference/forms/building/layout/get",
+                "api-reference/forms/building/layout/update",
+                "api-reference/forms/building/layout/preview"
+              ]
+            },
+            {
+              "group": "Steps",
+              "pages": [
+                "api-reference/forms/building/steps/create",
+                "api-reference/forms/building/steps/list",
+                "api-reference/forms/building/steps/get",
+                "api-reference/forms/building/steps/update",
+                "api-reference/forms/building/steps/delete",
+                "api-reference/forms/building/steps/reorder"
+              ]
+            }
           ]
         },
         {
