@@ -1,0 +1,71 @@
+---
+title: 'Delete Form Field'
+description: 'Delete a field from a form'
+api: 'DELETE /v1/forms/{formId}/fields/{fieldId}'
+---
+
+Remove a field from a form.
+
+### Path Parameters
+
+<ParamField path="formId" type="string" required>
+  ID of the form
+</ParamField>
+
+<ParamField path="fieldId" type="string" required>
+  ID of the field to delete
+</ParamField>
+
+### Request Examples
+
+<CodeGroup>
+```bash cURL
+curl -X DELETE "https://api.palm.com/v1/forms/form_abc123/fields/field_xyz789" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```typescript Node
+import { Palm } from '@palm/node';
+
+const palm = new Palm('YOUR_API_KEY');
+
+await palm.forms.fields.delete('form_abc123', 'field_xyz789');
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "field_xyz789",
+    "deleted": true,
+    "deleted_at": "2024-03-20T12:00:00Z"
+  }
+}
+```
+
+### Error Examples
+
+<CodeGroup>
+```json 404 Not Found
+{
+  "success": false,
+  "error": {
+    "code": "FIELD_NOT_FOUND",
+    "message": "Field not found"
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": {
+    "code": "FIELD_HAS_RESPONSES",
+    "message": "Cannot delete field with existing responses"
+  }
+}
+```
+</CodeGroup>
