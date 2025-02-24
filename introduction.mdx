@@ -7,80 +7,72 @@ import { Card, CardGroup } from '@/components/card'
 
 # Palm Partner API
 
-Welcome to the Palm API documentation. This API enables you to manage business profiles, track compliance, handle stakeholder information, and more.
+Palm API provides enterprise-grade solutions for business entity management, compliance monitoring, and stakeholder tracking. Get started in minutes with our comprehensive suite of tools.
 
-## Base URL
-
-```bash
-https://api.palm.io/v1
-```
-
-## Key Features
+## Core Features
 
 <CardGroup cols={2}>
   <Card title="Profile Management" icon="building" href="/api-reference/profiles/overview">
-    Create and manage verified business profiles with complete ownership tracking
+    Manage verified business profiles and ownership structures
   </Card>
   <Card title="Compliance Tracking" icon="shield-check" href="/api-reference/compliance/overview">
-    Automated compliance monitoring for BOI, SOI, and more
+    Monitor BOI and SOI compliance automatically
   </Card>
   <Card title="Stakeholder Management" icon="users" href="/api-reference/stakeholders/overview">
-    Track beneficial owners and stakeholder relationships
+    Track beneficial owners and relationships
   </Card>
   <Card title="Document Management" icon="file" href="/api-reference/documents/overview">
-    Secure document storage and verification
+    Store and verify documents securely
   </Card>
 </CardGroup>
 
-## Getting Started
+## Quick Integration
 
-1. [Create an account](https://dashboard.palm.io/signup)
-2. [Get your API keys](https://dashboard.palm.io/settings/api)
-3. [Read the quickstart guide](/quickstart)
-4. [Explore the API reference](/api-reference/authentication/overview)
+<Steps>
+  ### Get API Access
+  Sign up at [dashboard.palm.io](https://dashboard.palm.io/signup) and obtain your API keys
 
-## Integration Options
+  ### Choose Your Integration
+  ```bash
+  # Direct API Access
+  curl -X GET "https://api.palm.com/v1/profiles" \
+    -H "Authorization: Bearer YOUR_API_KEY"
 
-### REST API
-```bash
-# Using API Key authentication
-curl -X GET "https://api.palm.com/v1/profiles" \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
+  # SDK Installation
+  npm install @palm/node    # Node.js
+  pip install palm-api      # Python
+  ```
 
-### SDKs
-```bash
-# Node.js
-npm install @palm/node
-
-# Python
-pip install palm-api
-```
-
-### Webhooks
-```json
-{
-  "type": "profile.updated",
-  "data": {
-    "profileId": "prof_123abc",
-    "changes": ["compliance.status"]
+  ### Enable Webhooks (Optional)
+  Set up real-time updates for your integration:
+  ```json
+  {
+    "type": "profile.updated",
+    "data": {
+      "profileId": "prof_123abc",
+      "changes": ["compliance.status"]
+    }
   }
-}
-```
+  ```
+</Steps>
 
-## Support & Resources
+## Resources
 
 <CardGroup cols={2}>
-  <Card title="Join Community" icon="slack" href="https://community.getpalm.com">
-    Get help from the Palm community
-  </Card>
   <Card title="API Reference" icon="code" href="/api-reference/authentication/overview">
-    Explore detailed API documentation
+    Complete API documentation
   </Card>
-  <Card title="SDKs & Tools" icon="wrench" href="/sdks/node">
-    Find libraries and tools
+  <Card title="Quickstart Guide" icon="rocket" href="/quickstart">
+    Step-by-step integration guide
   </Card>
-  <Card title="Status" icon="signal" href="https://status.getpalm.com">
-    View API status and uptime
+  <Card title="Community" icon="users" href="https://community.getpalm.com">
+    Join our developer community
+  </Card>
+  <Card title="System Status" icon="signal" href="https://status.getpalm.com">
+    Check API availability
   </Card>
 </CardGroup>
+
+<Note>
+Need help? Contact our [support team](mailto:support@getpalm.com) or visit our [community forum](https://community.getpalm.com).
+</Note>

@@ -46,7 +46,8 @@
       "pages": [
         "introduction",
         "quickstart",
-        "development"
+        "development",
+        "introduction"
       ]
     },
     {
